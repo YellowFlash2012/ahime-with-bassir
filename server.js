@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
 
-app.get('/', (req, res) => {
+app.get('/api/v1/products', (req, res) => {
     res.send(data.products)
 })
 
