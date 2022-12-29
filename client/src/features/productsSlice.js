@@ -15,7 +15,7 @@ export const fetchProducts = createAsyncThunk(
     async (id,thunkAPI) => {
         
         try {
-            const res = await axios.get("/api/v1/product");
+            const res = await axios.get("/api/v1/products");
             
             return res.data;
             

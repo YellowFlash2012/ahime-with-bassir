@@ -1,9 +1,11 @@
-import { useEffect, useState} from "react";
+import { useEffect} from "react";
+import { Container } from "react-bootstrap";
 
 import {useDispatch,useSelector} from "react-redux"
 import { Link } from "react-router-dom";
-import axios from "axios"
+
 import RiseLoader from "react-spinners/RiseLoader"
+import Footer from "../components/Footer";
 
 import { fetchProducts } from "../features/productsSlice";
 
@@ -23,6 +25,8 @@ const Home = () => {
     return (
         <div>
             <main>
+                <Container>
+
                 <h1>Featured Products</h1>
                 <div className="products-container">
                     {loading ? (
@@ -30,10 +34,10 @@ const Home = () => {
                             <RiseLoader size={25} color="green" />
                         </div>
                     ) : isError ? (
-                            <div>{ error}</div>
-                    ) : (
-                        products.map((pdt) => (
-                            <div key={pdt.slug} className="product-card">
+                        <div>{ error}</div>
+                        ) : (
+                            products.map((pdt) => (
+                                <div key={pdt.slug} className="product-card">
                                 <Link to={`/product/${pdt.slug}`}>
                                     <img src={pdt.image} alt={pdt.name} />
                                 </Link>
@@ -51,9 +55,12 @@ const Home = () => {
                                 </div>
                             </div>
                         ))
-                    )}
+                        )}
                 </div>
+                        </Container>
             </main>
+
+            
         </div>
     );
 };
