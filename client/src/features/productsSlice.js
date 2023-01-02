@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { getError } from "../utils";
 
 
 const initialState = {
@@ -22,7 +23,7 @@ export const fetchProducts = createAsyncThunk(
             
         } catch (error) {
             // console.log(error.message);
-            return thunkAPI.rejectWithValue(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
         }
     }
 );
@@ -36,7 +37,7 @@ export const fetchSingleProduct = createAsyncThunk(
             return res.data;
         } catch (error) {
             // console.log(error.message);
-            return thunkAPI.rejectWithValue(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
         }
     }
 );

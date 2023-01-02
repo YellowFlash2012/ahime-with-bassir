@@ -5,8 +5,10 @@ import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 
 
-import RiseLoader from "react-spinners/RiseLoader";
+
 import Footer from "../components/Footer";
+import Loading from "../components/Loading";
+import MessageBox from "../components/MessageBox";
 import ProductCard from "../components/ProductCard";
 
 import { fetchProducts } from "../features/productsSlice";
@@ -32,16 +34,14 @@ const Home = () => {
                     <h1>Featured Products</h1>
                     <div className="products-container">
                         {loading ? (
-                            <div>
-                                <RiseLoader size={25} color="green" />
-                            </div>
+                            <Loading />
                         ) : isError ? (
-                            <div>{error}</div>
+                            <MessageBox variant="danger">{error}</MessageBox>
                         ) : (
                             <Row>
                                 {products.map((pdt) => (
-                                    <Col sm={6} md={4} lg={3} className="mb-3" >
-                                        <ProductCard key={pdt.slug} pdt={pdt}/>
+                                    <Col sm={6} md={4} lg={3} className="mb-3">
+                                        <ProductCard key={pdt.slug} pdt={pdt} />
                                     </Col>
                                 ))}
                             </Row>

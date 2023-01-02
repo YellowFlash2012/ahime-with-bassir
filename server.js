@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.get('/api/v1/products', (req, res) => {
-    res.send(data.products)
+    res.status(200).send(data.products)
 })
 
 app.get('/api/v1/products/slug/:slug', (req, res) => {
@@ -31,7 +31,7 @@ app.get('/api/v1/products/slug/:slug', (req, res) => {
         res.status(200).send(product)
         
     } else {
-        res.status(404).send({error:"Product NOT found!"})
+        res.status(404).send({message:"Product NOT found!"})
     }
 })
 

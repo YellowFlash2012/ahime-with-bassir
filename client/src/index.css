@@ -52,3 +52,10 @@ main {
 .img-large {
   max-width: 100%;
 }
+
+.product-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
