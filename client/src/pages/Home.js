@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { Helmet } from "react-helmet-async";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -25,6 +26,9 @@ const Home = () => {
         <div>
             <main>
                 <Container>
+                    <Helmet>
+                        <title>Jessica Store</title>
+                    </Helmet>
                     <h1>Featured Products</h1>
                     <div className="products-container">
                         {loading ? (

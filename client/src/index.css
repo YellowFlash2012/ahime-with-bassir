@@ -29,6 +29,7 @@ main {
   
 }
 
+/* product card component */
 .rating span {
   color: #ffc000;
 }
@@ -45,4 +46,9 @@ main {
 
 .product-info {
   padding: 1rem;
+}
+
+/* product component */
+.img-large {
+  max-width: 100%;
 }
