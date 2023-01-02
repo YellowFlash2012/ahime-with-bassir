@@ -19,6 +19,7 @@ import Rating from "../components/Rating";
 import { Helmet } from "react-helmet-async";
 import Loading from "../components/Loading";
 import MessageBox from "../components/MessageBox";
+import { addTocart } from "../features/cartSlice";
 
 const Product = () => {
     const { slug } = useParams();
@@ -32,6 +33,10 @@ const Product = () => {
     useEffect(() => {
         dispatch(fetchSingleProduct(slug));
     }, []);
+
+    const addToCartHandler = () => {
+        dispatch(addTocart({...product, qty:1}))
+    }
 
     return (
         <div className="product-container">
@@ -114,7 +119,7 @@ const Product = () => {
                                         {product.countInStock > 0 && (
                                             <ListGroupItem>
                                                 <div className="d-grid">
-                                                    <Button variant="primary">
+                                                    <Button variant="primary" onClick={addToCartHandler}>
                                                         Add To Cart
                                                     </Button>
                                                 </div>

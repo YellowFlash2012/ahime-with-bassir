@@ -40,8 +40,14 @@ const Home = () => {
                         ) : (
                             <Row>
                                 {products.map((pdt) => (
-                                    <Col sm={6} md={4} lg={3} className="mb-3">
-                                        <ProductCard key={pdt.slug} pdt={pdt} />
+                                    <Col
+                                        key={pdt.slug}
+                                        sm={6}
+                                        md={4}
+                                        lg={3}
+                                        className="mb-3"
+                                    >
+                                        <ProductCard pdt={pdt} />
                                     </Col>
                                 ))}
                             </Row>
