@@ -5,6 +5,7 @@ import morgan from "morgan"
 import helmet from "helmet"
 
 import data from "./database/data.js"
+import connectDB from "./config/db.js"
 
 
 
@@ -45,6 +46,7 @@ app.get('/api/v1/products/slug/:slug', (req, res) => {
     }
 })
 
+connectDB()
 app.listen(port, () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode | Port ${port}`.yellow.bold);
 })
