@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
     Badge,
     Button,
@@ -20,6 +20,7 @@ import { Helmet } from "react-helmet-async";
 import Loading from "../components/Loading";
 import MessageBox from "../components/MessageBox";
 import { addTocart } from "../features/cartSlice";
+import axios from "axios";
 
 const Product = () => {
     const { slug } = useParams();
@@ -28,15 +29,33 @@ const Product = () => {
         (store) => store.products
     );
 
-    const dispatch = useDispatch();
+    const { cartItems } = useSelector((store) => store.cart);
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    
     useEffect(() => {
         dispatch(fetchSingleProduct(slug));
     }, []);
+    
+    const addToCartHandler = async () => {
+        const existingPdt = cartItems.find(x => x._id === product._id);
+        
+        const qty = existingPdt ? existingPdt.qty + 1 : 1;
+        
+        const { data } = await axios.get(`/api/v1/products/${product._id}`);
+        
 
-    const addToCartHandler = () => {
-        dispatch(addTocart({...product, qty:1}))
-    }
+        if (data.countInStock < qty) {
+            window.alert(`Exceeded Max product quantity is ${data.countInStock}`);
+
+            return;
+        };
+        dispatch(addTocart({ ...product, qty }))
+
+        navigate("/cart")
+    };
 
     return (
         <div className="product-container">

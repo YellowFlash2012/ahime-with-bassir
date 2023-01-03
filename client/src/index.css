@@ -59,3 +59,7 @@ main {
   align-items: center;
   
 }
+
+.img-thumbnail {
+  height: 80px;
+}

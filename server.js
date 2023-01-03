@@ -24,6 +24,16 @@ app.get('/api/v1/products', (req, res) => {
     res.status(200).send(data.products)
 })
 
+app.get('/api/v1/products/:id', (req, res) => {
+    const product = data.products.find((x) => x._id === req.params.id);
+
+    if (product) {
+        res.status(200).send(product);
+    } else {
+        res.status(404).send({ message: "Product NOT found!" });
+    }
+})
+
 app.get('/api/v1/products/slug/:slug', (req, res) => {
     const product = data.products.find(x => x.slug === req.params.slug);
 

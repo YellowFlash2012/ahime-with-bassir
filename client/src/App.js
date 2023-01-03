@@ -11,6 +11,7 @@ import Product from "./pages/Product";
 
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "./components/Footer";
+import Cart from "./pages/Cart";
 
 
 function App() {
@@ -20,7 +21,11 @@ function App() {
         <NavbarComp/>
             <Routes>
                 <Route path="/" element={<Home />} />
+
                 <Route path="/product/:slug" element={<Product />} />
+
+                <Route path="/cart" element={<Cart />} />
+
                 <Route path="*" element={<NotFound />} />
             </Routes>
             <ToastContainer />

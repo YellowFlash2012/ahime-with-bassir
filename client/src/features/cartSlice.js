@@ -11,9 +11,17 @@ export const cartSlice = createSlice({
     initialState,
     reducers: {
         addTocart: (state, action) => {
+            const newPdt = action.payload;
+            
+
+            const existingPdt = state.cartItems.find(pdt => pdt._id === newPdt._id);
+        
+
+            const cartItems = existingPdt ? state.cartItems.map(pdt => pdt._id === existingPdt._id ? newPdt : pdt) : [...state.cartItems, newPdt];
+
             return {
                 ...state,
-                cartItems:[...state.cartItems, action.payload]
+                cartItems
             }
         }
     },

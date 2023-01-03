@@ -22,7 +22,7 @@ const NavbarComp = () => {
                                 Cart
                                 {cartItems.length > 0 && (
                                     <Badge pill bg="success">
-                                        {cartItems.length}
+                                        {cartItems.reduce((a,b)=>a+b.qty,0)}
                                     </Badge>
                                 )}
                             </Link>
