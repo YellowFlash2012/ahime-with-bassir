@@ -12,15 +12,15 @@ import {
     Row,
 } from "react-bootstrap";
 
-import RiseLoader from "react-spinners/RiseLoader";
+import axios from "axios";
+
+import { Helmet } from "react-helmet-async";
 
 import { fetchSingleProduct } from "../features/productsSlice";
 import Rating from "../components/Rating";
-import { Helmet } from "react-helmet-async";
 import Loading from "../components/Loading";
 import MessageBox from "../components/MessageBox";
-import { addTocart } from "../features/cartSlice";
-import axios from "axios";
+import { addToCart } from "../features/cartSlice";
 
 const Product = () => {
     const { slug } = useParams();
@@ -48,11 +48,11 @@ const Product = () => {
         
 
         if (data.countInStock < qty) {
-            window.alert(`Exceeded Max product quantity is ${data.countInStock}`);
+            window.alert(`Exceeded max product quantity of ${data.countInStock}`);
 
             return;
         };
-        dispatch(addTocart({ ...product, qty }))
+        dispatch(addToCart({ ...product, qty }))
 
         navigate("/cart")
     };

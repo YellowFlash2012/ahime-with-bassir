@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
@@ -11,6 +12,7 @@ import Loading from "../components/Loading";
 import MessageBox from "../components/MessageBox";
 import ProductCard from "../components/ProductCard";
 
+
 import { fetchProducts } from "../features/productsSlice";
 
 const Home = () => {
@@ -22,7 +24,9 @@ const Home = () => {
 
     useEffect(() => {
         dispatch(fetchProducts());
-    }, []);
+    }, [dispatch]);
+
+    
 
     return (
         <div>
