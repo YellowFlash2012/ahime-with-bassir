@@ -1,7 +1,9 @@
+import bcrypt from "bcryptjs"
+
 const data = {
     products: [
         {
-            _id: '1',
+            // _id: '1',
             name: "Nike Slim Shirt",
             slug: "nike-slim-shirt",
             category: "Shirts",
@@ -14,7 +16,7 @@ const data = {
             description: "high quality shirts",
         },
         {
-            _id: '2',
+            // _id: '2',
             name: "Adidas Fit Shirt",
             slug: "adidas-fit-shirt",
             category: "Shirts",
@@ -27,7 +29,7 @@ const data = {
             description: "high quality shirts",
         },
         {
-            _id: '3',
+            // _id: '3',
             name: "Nike Slim Pant",
             slug: "nike-slim-pant",
             category: "Pants",
@@ -40,7 +42,7 @@ const data = {
             description: "high quality pants",
         },
         {
-            _id: '4',
+            // _id: '4',
             name: "Puma Fit Pant",
             slug: "puma-fit-pant",
             category: "Pants",
@@ -53,6 +55,27 @@ const data = {
             description: "high quality pants",
         },
     ],
+    users: [
+        {
+            name: "Hokage",
+            email: "hokage@konoha.io",
+            password: bcrypt.hashSync('hokageoftheleaf'),
+            isAdmin:true
+        },
+        {
+            name: "Houki Matatami",
+            email: "houki@konoha.io",
+            password: bcrypt.hashSync('houkioftheleaf'),
+            isAdmin:false
+        },
+        {
+            name: "Kakashi Hatake",
+            email: "kakashi@konoha.io",
+            password: bcrypt.hashSync('kakashioftheleaf'),
+            isAdmin:false
+        },
+
+    ]
 };
 
 export default data
