@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {LinkContainer} from "react-router-bootstrap"
 import { Link } from "react-router-dom";
 import { logout } from "../features/authSlice";
+import { resetCart } from "../features/cartSlice";
 
 
 const NavbarComp = () => {
@@ -14,6 +15,7 @@ const NavbarComp = () => {
 
     const logoutHandler = () => {
         dispatch(logout())
+        dispatch(resetCart())
     }
 
     return (

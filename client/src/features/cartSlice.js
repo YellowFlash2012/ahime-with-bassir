@@ -1,10 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    cartItems: 
-            localStorage.getItem("cartItems") ? JSON.parse(localStorage.getItem("cartItems")) : []
-        
-    
+    cartItems: localStorage.getItem("cartItems")
+        ? JSON.parse(localStorage.getItem("cartItems"))
+        : [],
+
+    shippingAddress: localStorage.getItem("shippingAddress")
+        ? JSON.parse(localStorage.getItem("shippingAddress"))
+        : {},
 };
 
 export const cartSlice = createSlice({
@@ -36,6 +39,16 @@ export const cartSlice = createSlice({
                 ...state,
                 cartItems,
             };
+        },
+        saveShippingAddress: (state, action) => {
+            const shippingAddress = action.payload;
+            state.shippingAddress = shippingAddress;
+
+            
+        },
+        resetCart: (state, action) => {
+            state.cartItems = [];
+            state.shippingAddress={}
         }
     },
 
@@ -46,6 +59,7 @@ export const cartSlice = createSlice({
     },
 });
 
-export const { addToCart, removeFromCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, saveShippingAddress, resetCart } =
+    cartSlice.actions;
 
 export default cartSlice.reducer;
