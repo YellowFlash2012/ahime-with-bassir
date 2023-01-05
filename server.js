@@ -4,10 +4,11 @@ import { config } from "dotenv"
 import morgan from "morgan"
 import helmet from "helmet"
 
-import data from "./database/data.js"
+
 import connectDB from "./config/db.js"
-import seedRouter from "./routes/seedRoutes.js"
+import seedRoutes from "./routes/seedRoutes.js"
 import productRoutes from "./routes/products.js"
+import userRoutes from "./routes/users.js"
 
 
 
@@ -23,11 +24,15 @@ if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
 
-app.use("/api/v1/seed", seedRouter)
+app.use("/api/v1/seed", seedRoutes);
 app.use("/api/v1/products", productRoutes)
 
+app.use("/api/v1/users", userRoutes);
 
 
+app.use((err, req, res, next) => {
+    res.status(500).send({ message: err.message });
+})
 
 connectDB()
 app.listen(port, () => {

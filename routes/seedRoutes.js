@@ -3,9 +3,9 @@ import data from "../database/data.js";
 import Product from "../models/Product.js";
 import User from "../models/User.js";
 
-const seedRouter = express.Router();
+const router = express.Router();
 
-seedRouter.get("/", async (req, res) => {
+router.get("/", async (req, res) => {
     await Product.remove({})
 
     const newPdts = await Product.insertMany(data.products);
@@ -17,4 +17,4 @@ seedRouter.get("/", async (req, res) => {
     res.send({newPdts, newUsers})
 })
 
-export default seedRouter
+export default router
