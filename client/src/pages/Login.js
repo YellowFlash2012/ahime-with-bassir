@@ -3,6 +3,7 @@ import { Button, Container, Form, FormControl, FormGroup, FormLabel } from "reac
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
 import { loginUser } from "../features/authSlice";
 
 const Login = () => {
@@ -22,11 +23,11 @@ const Login = () => {
     const loginHandler = async (e) => {
         e.preventDefault()
 
-        console.log(email,password);
+        // console.log(email,password);
 
         dispatch(loginUser({ email, password }))
         
-        console.log(isError);
+        // console.log(isError);
         if (!isError) {
             navigate(redirect || "/")
             
@@ -74,7 +75,9 @@ const Login = () => {
                     </FormGroup>
 
                     <div className="mb-3">
-                        <Button type="submit">Login</Button>
+                        <Button type="submit">
+                            {loading ? (<Loading/>) : "Login"}
+                        </Button>
                     </div>
 
                     <div className="mb-3">

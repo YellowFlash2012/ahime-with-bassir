@@ -47,8 +47,10 @@ export const cartSlice = createSlice({
             
         },
         resetCart: (state, action) => {
+
             state.cartItems = [];
-            state.shippingAddress={}
+            state.shippingAddress = {}
+            localStorage.removeItem("cartItems");
         }
     },
 

@@ -56,7 +56,7 @@ export const authSlice = createSlice({
     },
 
     extraReducers: (builder) => {
-        // fetch all products
+        //* login users
         builder.addCase(loginUser.pending, (state) => {
             state.loading = true;
         });
@@ -76,19 +76,22 @@ export const authSlice = createSlice({
             toast.error(action.payload)
         });
 
-        // fetch a single product
+        //* signup users
         builder.addCase(signupUser.pending, (state) => {
             state.loading = true;
         });
         builder.addCase(signupUser.fulfilled, (state, action) => {
             state.loading = false;
             state.isError = false;
-            state.product = action.payload;
+            state.user = action.payload;
+
+            localStorage.setItem("user", JSON.stringify(action.payload));
         });
         builder.addCase(signupUser.rejected, (state, action) => {
             state.loading = false;
             state.isError = true;
             state.error = action.payload;
+            toast.error(action.payload);
         });
     },
 });
