@@ -8,7 +8,13 @@ const initialState = {
     shippingAddress: localStorage.getItem("shippingAddress")
         ? JSON.parse(localStorage.getItem("shippingAddress"))
         : {},
+
+    paymentMethod: localStorage.getItem("paymentMethod")
+        ? localStorage.getItem("paymentMethod")
+        : "",
 };
+
+
 
 export const cartSlice = createSlice({
     name: "cart",
@@ -44,13 +50,18 @@ export const cartSlice = createSlice({
             const shippingAddress = action.payload;
             state.shippingAddress = shippingAddress;
 
-            
+            console.log(shippingAddress);
+        },
+        savePaymentMethod: (state, action) => {
+            const paymentMethod = action.payload;
+            state.paymentMethod = paymentMethod;
         },
         resetCart: (state, action) => {
 
             state.cartItems = [];
             state.shippingAddress = {}
-            localStorage.removeItem("cartItems");
+            state.paymentMethod = "";
+            
         }
     },
 
@@ -61,7 +72,7 @@ export const cartSlice = createSlice({
     },
 });
 
-export const { addToCart, removeFromCart, saveShippingAddress, resetCart } =
+export const { addToCart, removeFromCart, saveShippingAddress,savePaymentMethod, resetCart } =
     cartSlice.actions;
 
 export default cartSlice.reducer;

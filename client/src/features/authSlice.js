@@ -46,12 +46,14 @@ export const authSlice = createSlice({
             
             state.loading = false;
             state.isError = false;
-            state.error=""
+            state.error = "";
             
-            state.user = null
+            state.user = null;
+
             localStorage.removeItem("user")
-            localStorage.removeItem("shippingAddress")
-            
+            localStorage.removeItem("cartItems");
+            localStorage.removeItem("shippingAddress");
+            localStorage.removeItem("paymentMethod");
         }
     },
 

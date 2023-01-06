@@ -29,7 +29,7 @@ const Shipping = () => {
     const shippingHandler = (e) => {
         e.preventDefault()
 
-        dispatch(saveShippingAddress())
+        dispatch(saveShippingAddress({fullName, address, city, postalCode, country}));
 
         localStorage.setItem("shippingAddress", JSON.stringify({
             fullName, address, city, postalCode, country
