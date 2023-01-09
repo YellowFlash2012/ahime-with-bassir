@@ -16,6 +16,7 @@ import Shipping from "./pages/Shipping";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PaymentMethod from "./pages/PaymentMethod";
+import PlaceOrder from "./pages/PlaceOrder";
 
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
                 <Route path="/shipping" element={<Shipping />} />
 
                 <Route path="/payment" element={<PaymentMethod />} />
+
+                <Route path="/place-order" element={<PlaceOrder />} />
 
                 <Route path="*" element={<NotFound />} />
             </Routes>
