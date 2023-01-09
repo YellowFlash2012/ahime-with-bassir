@@ -11,7 +11,7 @@ const PaymentMethod = () => {
     const { shippingAddress, paymentMethod } = useSelector((store) => store.cart);
     
     const [paymentMethodName, setPaymentMethodName] = useState(paymentMethod || "Paypal");
-    console.log(shippingAddress);
+    // console.log(shippingAddress);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();

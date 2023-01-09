@@ -8,6 +8,7 @@ import helmet from "helmet"
 import connectDB from "./config/db.js"
 import seedRoutes from "./routes/seedRoutes.js"
 import productRoutes from "./routes/products.js"
+import orderRoutes from "./routes/orders.js"
 import userRoutes from "./routes/users.js"
 
 
@@ -26,6 +27,7 @@ if (process.env.NODE_ENV === "development") {
 
 app.use("/api/v1/seed", seedRoutes);
 app.use("/api/v1/products", productRoutes)
+app.use("/api/v1/orders", orderRoutes)
 
 app.use("/api/v1/users", userRoutes);
 

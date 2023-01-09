@@ -1,14 +1,20 @@
 import { useEffect } from "react";
 import { Button, Card, Col, Container, ListGroup, ListGroupItem, Row } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import CheckoutSteps from "../components/CheckoutSteps";
+import Loading from "../components/Loading";
+import { resetCart } from "../features/cartSlice";
+import { placeOrder } from "../features/ordersSlice";
 
 const PlaceOrder = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const { shippingAddress, paymentMethod, cartItems } = useSelector((store) => store.cart);
+    const { shippingAddress, paymentMethod, cartItems, loading, isError, error } = useSelector((store) => store.cart);
+
+    const { order } = useSelector((store) => store.orders);
 
     // *calculating
 
@@ -22,7 +28,17 @@ const PlaceOrder = () => {
 
     let totalAmount = itemsAmount + shippingAmount + taxAmount;
 
-    const placeOrderHandler = (e) => { }
+    const placeOrderHandler = () => { 
+        dispatch(placeOrder({ orderItems: cartItems, shippingAddress, paymentMethod, itemsAmount, shippingAmount, taxAmount, totalAmount }));
+
+        if (!isError) {
+            dispatch(resetCart())
+            
+            navigate(`/order/${order._id}`)
+        }
+
+
+    }
     
     useEffect(() => {
         if (!paymentMethod) {
@@ -144,7 +160,9 @@ const PlaceOrder = () => {
 
                                 <ListGroupItem>
                                     <div className="d-grid">
-                                        <Button type="button" onClick={placeOrderHandler} disabled={cartItems.length===0}>Place Order</Button>
+                                        <Button type="button" onClick={placeOrderHandler} disabled={cartItems.length === 0}>
+                                            {loading ? <Loading/> : "Place Order"}
+                                        </Button>
                                     </div>
                                 </ListGroupItem>
 

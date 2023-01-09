@@ -1,4 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { getError } from "../utils";
 
 const initialState = {
     cartItems: localStorage.getItem("cartItems")
@@ -12,9 +14,28 @@ const initialState = {
     paymentMethod: localStorage.getItem("paymentMethod")
         ? localStorage.getItem("paymentMethod")
         : "",
+    loading: false,
+    isError: false,
+    error: "",
 };
 
+// export const placeOrder = createAsyncThunk(
+//     "cart/placeOrder",
+//     async (orderData, thunkAPI) => {
+//         try {
+//             const res = await axios.post("/api/v1/orders", orderData, {
+//                 headers: {
+//                     authorization: `Bearer ${thunkAPI.getState().user.token}`,
+//                 },
+//             });
 
+//             return res.data;
+//         } catch (error) {
+//             // console.log(error.message);
+//             return thunkAPI.rejectWithValue(getError(error));
+//         }
+//     }
+// );
 
 export const cartSlice = createSlice({
     name: "cart",
@@ -50,7 +71,7 @@ export const cartSlice = createSlice({
             const shippingAddress = action.payload;
             state.shippingAddress = shippingAddress;
 
-            console.log(shippingAddress);
+            // console.log(shippingAddress);
         },
         savePaymentMethod: (state, action) => {
             const paymentMethod = action.payload;
@@ -61,7 +82,13 @@ export const cartSlice = createSlice({
             state.cartItems = [];
             state.shippingAddress = {}
             state.paymentMethod = "";
-            
+            state.loading = false;
+            state.isError = false;
+            state.error = "";
+        
+            localStorage.removeItem("cartItems")
+            localStorage.removeItem("shippingAddress")
+            localStorage.removeItem("PaymentMethod")
         }
     },
 
