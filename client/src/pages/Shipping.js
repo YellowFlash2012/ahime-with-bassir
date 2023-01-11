@@ -16,6 +16,8 @@ const Shipping = () => {
     useEffect(() => {
         if (!user) {
             navigate("/login?redirect=/shipping")
+
+            return;
         }
     },[navigate, user])
 

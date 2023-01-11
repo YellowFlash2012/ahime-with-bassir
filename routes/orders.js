@@ -27,4 +27,18 @@ router.post("/", isAuth, asyncHandler(async (req, res) => {
     res.status(201).send({message:"You successfully placed your order!", order})
 }))
 
+router.get("/:id", isAuth, asyncHandler(async (req, res) => {
+
+    console.log(req.params.id);
+    
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        res.status(200).send(order)
+    } else {
+        res.status(404).send({message:'Order Not Found!'})
+    }
+
+}))
+
 export default router

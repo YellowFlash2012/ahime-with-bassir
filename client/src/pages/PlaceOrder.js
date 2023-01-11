@@ -1,5 +1,13 @@
 import { useEffect } from "react";
-import { Button, Card, Col, Container, ListGroup, ListGroupItem, Row } from "react-bootstrap";
+import {
+    Button,
+    Card,
+    Col,
+    Container,
+    ListGroup,
+    ListGroupItem,
+    Row,
+} from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,15 +20,23 @@ const PlaceOrder = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { shippingAddress, paymentMethod, cartItems, loading, isError, error } = useSelector((store) => store.cart);
+    const {
+        shippingAddress,
+        paymentMethod,
+        cartItems,
+        
+    } = useSelector((store) => store.cart);
 
-    const { order } = useSelector((store) => store.orders);
+    const { order, loading, isError } = useSelector((store) => store.orders);
+    // console.log(order);
 
     // *calculating
 
-    const round2 = num => Math.round(num * 100 + Number.EPSILON) / 100;
+    const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
-    let itemsAmount = round2(cartItems.reduce((a, b) => a + b.qty * b.price, 0));
+    let itemsAmount = round2(
+        cartItems.reduce((a, b) => a + b.qty * b.price, 0)
+    );
 
     let shippingAmount = itemsAmount > 100 ? round2(0) : round2(10);
 
@@ -28,24 +44,35 @@ const PlaceOrder = () => {
 
     let totalAmount = itemsAmount + shippingAmount + taxAmount;
 
-    const placeOrderHandler = () => { 
-        dispatch(placeOrder({ orderItems: cartItems, shippingAddress, paymentMethod, itemsAmount, shippingAmount, taxAmount, totalAmount }));
+    const placeOrderHandler = () => {
+        dispatch(
+            placeOrder({
+                orderItems: cartItems,
+                shippingAddress,
+                paymentMethod,
+                itemsAmount,
+                shippingAmount,
+                taxAmount,
+                totalAmount,
+            })
+        );
+        // console.log(isError);
 
         if (!isError) {
-            dispatch(resetCart())
-            
-            navigate(`/order/${order._id}`)
+            navigate(`/order/${order._id}`);
+            dispatch(resetCart());
+            // console.log(order._id);
         }
+    };
 
-
-    }
-    
     useEffect(() => {
         if (!paymentMethod) {
-            navigate("/payment")
+            navigate("/payment");
+
+            return;
         }
-    }, [navigate, paymentMethod])
-    
+    }, [navigate, paymentMethod]);
+
     return (
         <Container>
             <CheckoutSteps step1 step2 step3 step4 />
@@ -93,12 +120,20 @@ const PlaceOrder = () => {
                             <Card.Title>Items</Card.Title>
 
                             <ListGroup variant="flush">
-                                {cartItems.map(item => (
+                                {cartItems.map((item) => (
                                     <ListGroupItem key={item._id}>
                                         <Row className="align-items-center">
                                             <Col md={6}>
-                                                <img src={item.image} alt={item.name} className="img-fluid rounded img-thumbnail" />{" "}
-                                                <Link to={`/product/${item.slug}`}>{item.name}</Link>
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    className="img-fluid rounded img-thumbnail"
+                                                />{" "}
+                                                <Link
+                                                    to={`/product/${item.slug}`}
+                                                >
+                                                    {item.name}
+                                                </Link>
                                             </Col>
 
                                             <Col md={3}>{item.qty}</Col>
@@ -109,7 +144,7 @@ const PlaceOrder = () => {
                                 ))}
                             </ListGroup>
                             <Link to="/cart">Edit</Link>
-</Card.Body>
+                        </Card.Body>
                     </Card>
                 </Col>
 
@@ -126,7 +161,7 @@ const PlaceOrder = () => {
                                         <Col>${itemsAmount.toFixed(2)}</Col>
                                     </Row>
                                 </ListGroupItem>
-                                
+
                                 <ListGroupItem>
                                     <Row>
                                         <Col>Shipping</Col>
@@ -134,7 +169,7 @@ const PlaceOrder = () => {
                                         <Col>${shippingAmount.toFixed(2)}</Col>
                                     </Row>
                                 </ListGroupItem>
-                                
+
                                 <ListGroupItem>
                                     <Row>
                                         <Col>Tax</Col>
@@ -142,17 +177,16 @@ const PlaceOrder = () => {
                                         <Col>${taxAmount.toFixed(2)}</Col>
                                     </Row>
                                 </ListGroupItem>
-                                
+
                                 <ListGroupItem>
                                     <Row>
                                         <Col>
-                                        <strong>Order Total</strong>
+                                            <strong>Order Total</strong>
                                         </Col>
 
                                         <Col>
                                             <strong>
-                                            ${totalAmount.toFixed(2)}
-
+                                                ${totalAmount.toFixed(2)}
                                             </strong>
                                         </Col>
                                     </Row>
@@ -160,12 +194,19 @@ const PlaceOrder = () => {
 
                                 <ListGroupItem>
                                     <div className="d-grid">
-                                        <Button type="button" onClick={placeOrderHandler} disabled={cartItems.length === 0}>
-                                            {loading ? <Loading/> : "Place Order"}
+                                        <Button
+                                            type="button"
+                                            onClick={placeOrderHandler}
+                                            disabled={cartItems.length === 0}
+                                        >
+                                            {loading ? (
+                                                <Loading />
+                                            ) : (
+                                                "Place Order"
+                                            )}
                                         </Button>
                                     </div>
                                 </ListGroupItem>
-
                             </ListGroup>
                         </Card.Body>
                     </Card>
