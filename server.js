@@ -25,6 +25,10 @@ if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
 
+app.get("/api/v1/keys/paypal", (req, res) => {
+    res.send(process.env.paypal_client_id || "sb")
+})
+
 app.use("/api/v1/seed", seedRoutes);
 app.use("/api/v1/products", productRoutes)
 app.use("/api/v1/orders", orderRoutes)

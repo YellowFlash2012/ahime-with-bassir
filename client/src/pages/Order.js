@@ -1,35 +1,90 @@
+
 import { useEffect } from "react";
 import { Card, Col, ListGroup, ListGroupItem, Row } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+    PayPalButtons,
+    usePayPalScriptReducer,
+} from "@paypal/react-paypal-js";
+
 import Loading from "../components/Loading";
 import MessageBox from "../components/MessageBox";
-import { getOrder } from "../features/ordersSlice";
+import { getOrder, loadPaypalScript, orderPay, payReset } from "../features/ordersSlice";
+import { toast } from "react-toastify";
+import { getError } from "../utils";
 
 const Order = () => {
+
+    
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
+    
     const { id } = useParams();
-
+    
     const { user } = useSelector(store => store.auth);
+    
+    const { order, clientId, loading, error, successPay, loadingPay } = useSelector(store => store.orders);
+    
+    const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+    const createOrder = (data, action) => {
+        return action.order
+            .create({
+            purchase_units: [
+                {
+                    amount:{value:order.totalAmount}
+                }
+            ]
+            })
+            .then(orderID => {
+            return orderID
+        })
+    }
+    const onApprove = (data, actions) => {
+        return actions.order.capture().then(async function(details) {
+            
+        dispatch(orderPay(id, details))
+            
+        })
+    }
 
-    const { order, loading, error } = useSelector(store => store.orders);
+    const onError = (err) => {
+        toast.error(getError(err))
+    }
 
     
     useEffect(() => {
-        if (!order._id || (order._id && order._id !== id)) {
+        if (!order._id || successPay || (order._id && order._id !== id)) {
             dispatch(getOrder(id));
+
+            if (successPay) {
+                dispatch(payReset())
+            }
+        } else {
+            dispatch(loadPaypalScript())
+
+            paypalDispatch({
+                type: "resetOptions",
+                value: {
+                    "client-id": clientId,
+                    currency:"USD"
+                }
+            })
+
+            paypalDispatch({
+                type: "setLoadingStatus",
+                value:"pending"
+            })
         }
-        
+
         if (!user) {
             navigate("/login")
 
             return;
         }
 
-    },[dispatch, navigate, id, order._id, user])
+    },[dispatch, navigate, id, order._id, user, clientId, successPay, paypalDispatch])
 
     return (
         <div>
@@ -182,7 +237,19 @@ const Order = () => {
                                                     )}
                                                 </Col>
                                             </Row>
-                                        </ListGroupItem>
+                                                </ListGroupItem>
+                                                
+                                                {!order.isPaid && (
+                                                    <ListGroupItem>
+                                                        {isPending ? <Loading /> : 
+                                                            <div>
+                                                                <PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}>
+                                                                </PayPalButtons>
+                                                        </div>
+                                                        }
+                                                        {loadingPay && <Loading/>}
+                                                    </ListGroupItem>
+                                                )}
                                     </ListGroup>
                                 </Card.Body>
                             </Card>

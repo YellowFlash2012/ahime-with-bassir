@@ -5,6 +5,7 @@ import Order from "../models/Order.js";
 
 const router = express.Router();
 
+// * place new order
 router.post("/", isAuth, asyncHandler(async (req, res) => {
     // console.log(req.user.id);
 
@@ -27,6 +28,7 @@ router.post("/", isAuth, asyncHandler(async (req, res) => {
     res.status(201).send({message:"You successfully placed your order!", order})
 }))
 
+// * get order by id
 router.get("/:id", isAuth, asyncHandler(async (req, res) => {
 
     console.log(req.params.id);
@@ -37,6 +39,42 @@ router.get("/:id", isAuth, asyncHandler(async (req, res) => {
         res.status(200).send(order)
     } else {
         res.status(404).send({message:'Order Not Found!'})
+    }
+
+}))
+
+// * pay order
+router.put("/:id/pay", isAuth, asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        order.isPaid = true;
+        order.paidAt = Date.now();
+
+        order.paymentResult = {
+            id: req.body.id,
+            status: req.body.status,
+            update_time: req.body.update_time,
+            email_address:req.body.email_address
+        }
+        
+        const updatedOrder = await order.save();
+        
+        res.send({ message: "Successful payment!", order: updatedOrder });
+    } else {
+        res.status(404).send({ message: "Order Not Found!" });
+    }
+}))
+
+// * get all logged in user's orders
+router.get("/", isAuth, asyncHandler(async (req, res) => {
+    
+    const orders = await Order.find({user:req.user.id});
+
+    if (orders) {
+        res.status(200).send(orders)
+    } else {
+        res.status(404).send({message:'Orders Not Found!'})
     }
 
 }))

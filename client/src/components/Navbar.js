@@ -21,13 +21,18 @@ const NavbarComp = () => {
     return (
         <div>
             <header>
-                <Navbar bg="dark" variant="dark">
+                <Navbar bg="dark" variant="dark" expand="lg">
                     <Container>
                         <LinkContainer to="/">
                             <Navbar.Brand>Jessica Store</Navbar.Brand>
                         </LinkContainer>
 
-                        <Nav className="me-auto">
+                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        
+                        <Navbar.Collapse id="basic-navbar-nav">
+
+
+                        <Nav className="me-auto w-100 justify-content-end">
                             <Link to="/cart" className="nav-link">
                                 Cart
                                 {cartItems.length > 0 && (
@@ -35,23 +40,23 @@ const NavbarComp = () => {
                                         {cartItems.reduce(
                                             (a, b) => a + b.qty,
                                             0
-                                        )}
+                                            )}
                                     </Badge>
                                 )}
                             </Link>
 
                             {user ? (
                                 <NavDropdown
-                                    title={user.name}
+                                title={user.name}
                                     id="basic-nav-dropdown"
-                                >
+                                    >
                                     <LinkContainer to="/profile">
                                         <NavDropdown.Item>
                                             Profile
                                         </NavDropdown.Item>
                                     </LinkContainer>
 
-                                    <LinkContainer to="/order-history">
+                                    <LinkContainer to="/orders">
                                         <NavDropdown.Item>
                                             Order History
                                         </NavDropdown.Item>
@@ -72,6 +77,7 @@ const NavbarComp = () => {
                                 </Link>
                             )}
                         </Nav>
+                            </Navbar.Collapse>
                     </Container>
                 </Navbar>
             </header>

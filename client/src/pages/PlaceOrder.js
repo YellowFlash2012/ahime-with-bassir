@@ -56,12 +56,12 @@ const PlaceOrder = () => {
                 totalAmount,
             })
         );
-        // console.log(isError);
+        console.log(isError);
 
         if (!isError) {
             navigate(`/order/${order._id}`);
             dispatch(resetCart());
-            // console.log(order._id);
+            console.log(order._id);
         }
     };
 

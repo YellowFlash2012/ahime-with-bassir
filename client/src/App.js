@@ -18,6 +18,7 @@ import Signup from "./pages/Signup";
 import PaymentMethod from "./pages/PaymentMethod";
 import PlaceOrder from "./pages/PlaceOrder";
 import Order from "./pages/Order";
+import Orders from "./pages/Orders";
 
 
 function App() {
@@ -42,6 +43,8 @@ function App() {
                 <Route path="/place-order" element={<PlaceOrder />} />
 
                 <Route path="/order/:id" element={<Order />} />
+                
+                <Route path="/orders" element={<Orders />} />
 
                 <Route path="*" element={<NotFound />} />
             </Routes>
