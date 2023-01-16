@@ -6,6 +6,7 @@ import { getError } from "../utils";
 
 const initialState = {
     products: [],
+    categories:[],
     product:{},
     loading: false,
     isError:false,
@@ -21,6 +22,20 @@ export const fetchProducts = createAsyncThunk(
             
             return res.data;
             
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
+export const getAllCategoriess = createAsyncThunk(
+    "products/getAllCategoriess",
+    async (id, thunkAPI) => {
+        try {
+            const res = await axios.get("/api/v1/products/categories");
+
+            return res.data;
         } catch (error) {
             // console.log(error.message);
             return thunkAPI.rejectWithValue(getError(error));
@@ -60,6 +75,23 @@ export const productsSlice = createSlice({
                 state.products = action.payload;
             })
         builder.addCase(fetchProducts.rejected, (state, action) => {
+            state.loading = false;
+            state.isError = true;
+            state.error = action.payload;
+        
+        })
+        
+        // get all categories
+        builder
+            .addCase(getAllCategoriess.pending, (state) => {
+                state.loading = true;
+            })
+            builder.addCase(getAllCategoriess.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isError = false;
+                state.categories = action.payload;
+            })
+        builder.addCase(getAllCategoriess.rejected, (state, action) => {
             state.loading = false;
             state.isError = true;
             state.error = action.payload;

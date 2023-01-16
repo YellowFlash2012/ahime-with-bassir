@@ -4,10 +4,18 @@ import Product from "../models/Product.js";
 
 const router = express.Router();
 
+// get all products
 router.get("/", asyncHandler(async (req, res) => {
     const products = await Product.find();
 
     res.send(products);
+}))
+
+// get all categories
+router.get("/categories", asyncHandler(async (req, res) => {
+    const categories = await Product.find().distinct('category');
+
+    res.send(categories);
 }))
 
 router.get("/:id", asyncHandler( async(req, res) => {
