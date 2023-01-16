@@ -136,7 +136,7 @@ export const ordersSlice = createSlice({
             state.isError = false;
             state.order = action.payload.order;
 
-            console.log(state.order);
+            console.log(action.payload.order._id);
 
             toast.success(action.payload.message);
             
@@ -165,7 +165,7 @@ export const ordersSlice = createSlice({
             toast.error(action.payload);
         });
         
-        //* get a single order
+        //* get all orders
         builder.addCase(getAllOrders.pending, (state) => {
             state.loading = true;
         });

@@ -19,6 +19,7 @@ import PaymentMethod from "./pages/PaymentMethod";
 import PlaceOrder from "./pages/PlaceOrder";
 import Order from "./pages/Order";
 import Orders from "./pages/Orders";
+import Profile from "./pages/Profile";
 
 
 function App() {
@@ -35,6 +36,8 @@ function App() {
 
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+
+                <Route path="/profile" element={<Profile />} />
                 
                 <Route path="/shipping" element={<Shipping />} />
 

@@ -1,5 +1,6 @@
 import express from "express"
 import asyncHandler from "express-async-handler"
+import { isAuth } from "../middlewares/auth.js";
 import User from "../models/User.js";
 
 const router = express.Router();
@@ -50,6 +51,23 @@ router.post("/", asyncHandler(async (req, res) => {
         isAdmin: user.isAdmin,
         token:token
     })
+}))
+
+router.put("/profile", isAuth, asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user.id);
+
+    if (user) {
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+        user.password = req.body.password || user.password;
+
+        const updatedUser = await user.save();
+        const token = updatedUser.createJWT();
+
+        res.status(201).json({ message: "User updated successfully!", data: { _id: updatedUser._id, name: updatedUser.name, email: updatedUser.email, isAdmin: updatedUser.isAdmin, token: token } });
+    } else {
+        res.status(404).send("User Not Found!")
+    }
 }))
 
 export default router

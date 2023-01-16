@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import CheckoutSteps from "../components/CheckoutSteps";
 import Loading from "../components/Loading";
+import MoonLoading from "../components/MoonLoading";
 import { resetCart } from "../features/cartSlice";
 import { placeOrder } from "../features/ordersSlice";
 
@@ -28,7 +29,7 @@ const PlaceOrder = () => {
     } = useSelector((store) => store.cart);
 
     const { order, loading, isError } = useSelector((store) => store.orders);
-    // console.log(order);
+    console.log(order._id);
 
     // *calculating
 
@@ -44,7 +45,7 @@ const PlaceOrder = () => {
 
     let totalAmount = itemsAmount + shippingAmount + taxAmount;
 
-    const placeOrderHandler = () => {
+    const placeOrderHandler = async () => {
         dispatch(
             placeOrder({
                 orderItems: cartItems,
@@ -58,11 +59,15 @@ const PlaceOrder = () => {
         );
         console.log(isError);
 
-        if (!isError) {
-            navigate(`/order/${order._id}`);
-            dispatch(resetCart());
-            console.log(order._id);
-        }
+    if (!isError) {
+        
+        navigate(`/order/${order._id}`);
+        dispatch(resetCart());
+        console.log(order._id);
+    }
+        
+
+    
     };
 
     useEffect(() => {
@@ -200,7 +205,7 @@ const PlaceOrder = () => {
                                             disabled={cartItems.length === 0}
                                         >
                                             {loading ? (
-                                                <Loading />
+                                                <MoonLoading />
                                             ) : (
                                                 "Place Order"
                                             )}

@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loading from "../components/Loading";
+import MoonLoading from "../components/MoonLoading";
 import { loginUser, signupUser } from "../features/authSlice";
 
 const Signup = () => {
@@ -118,7 +119,7 @@ const Signup = () => {
 
                     <div className="mb-3">
                         <Button type="submit">
-                            {loading ? (<Loading/>) : "Sign Up"}
+                            {loading ? (<MoonLoading/>) : "Sign Up"}
                         </Button>
                     </div>
 

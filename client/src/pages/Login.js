@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
+import MoonLoading from "../components/MoonLoading";
 import { loginUser } from "../features/authSlice";
 
 const Login = () => {
@@ -76,7 +77,7 @@ const Login = () => {
 
                     <div className="mb-3">
                         <Button type="submit">
-                            {loading ? (<Loading/>) : "Login"}
+                            {loading ? (<MoonLoading/>) : "Login"}
                         </Button>
                     </div>
 

@@ -28,25 +28,11 @@ router.post("/", isAuth, asyncHandler(async (req, res) => {
     res.status(201).send({message:"You successfully placed your order!", order})
 }))
 
-// * get order by id
-router.get("/:id", isAuth, asyncHandler(async (req, res) => {
-
-    console.log(req.params.id);
-    
-    const order = await Order.findById(req.params.id);
-
-    if (order) {
-        res.status(200).send(order)
-    } else {
-        res.status(404).send({message:'Order Not Found!'})
-    }
-
-}))
 
 // * pay order
 router.put("/:id/pay", isAuth, asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
-
+    
     if (order) {
         order.isPaid = true;
         order.paidAt = Date.now();
@@ -70,7 +56,7 @@ router.put("/:id/pay", isAuth, asyncHandler(async (req, res) => {
 router.get("/", isAuth, asyncHandler(async (req, res) => {
     
     const orders = await Order.find({user:req.user.id});
-
+    
     if (orders) {
         res.status(200).send(orders)
     } else {
@@ -79,4 +65,18 @@ router.get("/", isAuth, asyncHandler(async (req, res) => {
 
 }))
 
+// * get order by id
+router.get("/:id", isAuth, asyncHandler(async (req, res) => {
+
+    console.log(req.params.id);
+    
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        res.status(200).send(order)
+    } else {
+        res.status(404).send({message:'Order Not Found!'})
+    }
+
+}))
 export default router
