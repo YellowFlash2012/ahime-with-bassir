@@ -8,7 +8,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node server.js",
         "server": "nodemon server.js",
-        "client": "npm start --prefix client"
+        "client": "npm start --prefix client",
+        "build": "npm i && cd ./client && npm i && npm run build"
     },
     "repository": {
         "type": "git",
@@ -30,5 +31,9 @@
         "jsonwebtoken": "^9.0.0",
         "mongoose": "^6.8.1",
         "morgan": "^1.10.0"
+    },
+    "engines": {
+        "node": " v18.13.0",
+        "npm":"9.1.1"
     }
 }

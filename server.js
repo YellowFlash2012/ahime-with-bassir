@@ -10,6 +10,7 @@ import seedRoutes from "./routes/seedRoutes.js"
 import productRoutes from "./routes/products.js"
 import orderRoutes from "./routes/orders.js"
 import userRoutes from "./routes/users.js"
+import path from "path"
 
 
 
@@ -35,7 +36,19 @@ app.use("/api/v1/orders", orderRoutes)
 
 app.use("/api/v1/users", userRoutes);
 
+// ***heroku deploy config
+const __dirname = path.resolve();
 
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "./client/build")));
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "./client/build/index.html"))
+    })
+    
+}
+
+
+// ***error handling
 app.use((err, req, res, next) => {
     res.status(500).send({ message: err.message });
 })
