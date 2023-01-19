@@ -99,6 +99,34 @@ const NavbarComp = () => {
                                         Login
                                     </Link>
                                 )}
+
+                                {user && user.isAdmin && (
+                                    <NavDropdown title="Admin" id="admin-nav-dropdown">
+                                        <LinkContainer to="/admin/dashboard">
+                                            <NavDropdown.Item>
+                                                Dashboard
+                                            </NavDropdown.Item>
+                                        </LinkContainer>
+                                        
+                                        <LinkContainer to="/admin/products-list">
+                                            <NavDropdown.Item>
+                                                Products
+                                            </NavDropdown.Item>
+                                        </LinkContainer>
+                                        
+                                        <LinkContainer to="/admin/orders-list">
+                                            <NavDropdown.Item>
+                                                Orders
+                                            </NavDropdown.Item>
+                                        </LinkContainer>
+                                        
+                                        <LinkContainer to="/admin/users-list">
+                                            <NavDropdown.Item>
+                                                Users
+                                            </NavDropdown.Item>
+                                        </LinkContainer>
+                                    </NavDropdown>
+                                )}
                             </Nav>
                         </Navbar.Collapse>
                     </Container>

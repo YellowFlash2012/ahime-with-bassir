@@ -78,11 +78,11 @@ const Order = () => {
             })
         }
 
-        if (!user) {
-            navigate("/login")
+        // if (!user) {
+        //     navigate("/login")
 
-            return;
-        }
+        //     return;
+        // }
 
     },[dispatch, navigate, id, order._id, user, clientId, successPay, paypalDispatch])
 

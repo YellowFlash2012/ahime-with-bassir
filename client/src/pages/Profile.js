@@ -11,9 +11,9 @@ const Profile = () => {
 
     const { user } = useSelector(store => store.auth);
 
-    if (!user) {
-        navigate("/login")
-    }
+    // if (!user) {
+    //     navigate("/login")
+    // }
 
     const [ name, setName ] = useState(user.name);
     const [ email, setEmail ] = useState(user.email);

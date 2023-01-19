@@ -18,9 +18,9 @@ const Orders = () => {
     useEffect(() => {
         dispatch(getAllOrders())
 
-        if (!user) {
-            navigate("/login")
-        }
+        // if (!user) {
+        //     navigate("/login")
+        // }
     },[dispatch])
 
     return <Container>
