@@ -19,24 +19,6 @@ const initialState = {
     error: "",
 };
 
-// export const placeOrder = createAsyncThunk(
-//     "cart/placeOrder",
-//     async (orderData, thunkAPI) => {
-//         try {
-//             const res = await axios.post("/api/v1/orders", orderData, {
-//                 headers: {
-//                     authorization: `Bearer ${thunkAPI.getState().user.token}`,
-//                 },
-//             });
-
-//             return res.data;
-//         } catch (error) {
-//             // console.log(error.message);
-//             return thunkAPI.rejectWithValue(getError(error));
-//         }
-//     }
-// );
-
 export const cartSlice = createSlice({
     name: "cart",
     initialState,

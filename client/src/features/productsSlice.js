@@ -6,6 +6,10 @@ import { getError } from "../utils";
 
 const initialState = {
     products: [],
+    searchProducts: [],
+    page: null,
+    pages: null,
+    countProducts:null,
     categories:[],
     product:{},
     loading: false,
@@ -48,6 +52,22 @@ export const fetchSingleProduct = createAsyncThunk(
     async (slug, thunkAPI) => {
         try {
             const res = await axios.get(`/api/v1/products/slug/${slug}`);
+
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
+export const fetchSearchProducts = createAsyncThunk(
+    "products/fetchSearchProducts",
+    async ({page, category, query, price, rating, order}, thunkAPI) => {
+        try {
+            const res = await axios.get(
+                `/api/v1/products/search?page=${page}&query=${query}&category=${category}&price=${price}&rating=${rating}&order=${order}`
+            );
 
             return res.data;
         } catch (error) {
@@ -108,6 +128,26 @@ export const productsSlice = createSlice({
             state.product = action.payload;
         });
         builder.addCase(fetchSingleProduct.rejected, (state, action) => {
+            state.loading = false;
+            state.isError = true;
+            state.error = action.payload;
+            
+        });
+        
+        // fetch all search products
+        builder.addCase(fetchSearchProducts.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(fetchSearchProducts.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isError = false;
+            state.searchProducts = action.payload.products;
+            console.log(action.payload.products);
+            state.countProducts = action.payload.countProducts;
+            state.page = action.payload.page;
+            state.pages = action.payload.pages;
+        });
+        builder.addCase(fetchSearchProducts.rejected, (state, action) => {
             state.loading = false;
             state.isError = true;
             state.error = action.payload;

@@ -117,9 +117,9 @@ const NavbarComp = () => {
 
                     {categories.map(category => (
                         <NavItem key={category}>
-                            <Link to={{pathname:"/search", hash:"#hash", search:`?category=${category}`}} onClick={()=>setSidebarOpen(false)}>
+                            <LinkContainer to={{pathname:"/search", hash:"#hash", search:`category=${category}`}} onClick={()=>setSidebarOpen(false)}>
                                 <NavLink>{category}</NavLink>
-                            </Link>
+                            </LinkContainer>
                         </NavItem>
                     ))}
                 </Nav>

@@ -108,13 +108,13 @@ const Order = () => {
 
                                     <Card.Text>
                                         <strong>Name:</strong>{" "}
-                                        {order.shippingAddress.fullName}
+                                        {order?.shippingAddress.fullName}
                                         <br />
                                         <strong>Address:</strong>{" "}
-                                        {order.shippingAddress.address},{" "}
-                                        {order.shippingAddress.city},{" "}
-                                        {order.shippingAddress.postalCode},{" "}
-                                        {order.shippingAddress.country}
+                                        {order?.shippingAddress.address},{" "}
+                                        {order?.shippingAddress.city},{" "}
+                                        {order?.shippingAddress.postalCode},{" "}
+                                        {order?.shippingAddress.country}
                                     </Card.Text>
 
                                     {order.isDelivered ? (
@@ -134,7 +134,7 @@ const Order = () => {
                                     <Card.Title>Payment</Card.Title>
 
                                     <Card.Text>
-                                        <strong>Method:</strong> {order.paymentMethod}
+                                        <strong>Method:</strong> {order?.paymentMethod}
                                     </Card.Text>
 
                                     {order.isPaid ? (

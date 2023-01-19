@@ -4,13 +4,10 @@ import { toast } from "react-toastify";
 import { getError } from "../utils";
 
 const initialState = {
-    orders: localStorage.getItem("orders")
-        ? JSON.parse(localStorage.getItem("orders"))
-        : [],
+    orders: [],
 
     order: {},
-    orders:[],
-
+    
     clientId: null,
 
     loadingPay:false,
@@ -120,6 +117,7 @@ export const ordersSlice = createSlice({
     name: "orders",
     initialState,
     reducers: {
+        
         payReset: (state) => {
             state.loadingPay = false;
             state.successPay = false;
@@ -130,6 +128,7 @@ export const ordersSlice = createSlice({
         //* place order
         builder.addCase(placeOrder.pending, (state) => {
             state.loading = true;
+            state.order = {};
         });
         builder.addCase(placeOrder.fulfilled, (state, action) => {
             state.loading = false;

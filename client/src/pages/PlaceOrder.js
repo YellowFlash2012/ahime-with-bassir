@@ -29,7 +29,7 @@ const PlaceOrder = () => {
     } = useSelector((store) => store.cart);
 
     const { order, loading, isError } = useSelector((store) => store.orders);
-    console.log(order._id);
+    console.log(isError);
 
     // *calculating
 
@@ -60,14 +60,13 @@ const PlaceOrder = () => {
         console.log(isError);
 
     if (!isError) {
-        
-        navigate(`/order/${order._id}`);
-        dispatch(resetCart());
-        console.log(order._id);
+        setTimeout(() => {
+            navigate(`/order/${order._id}`);
+            dispatch(resetCart());
+            console.log(order._id);
+            
+        }, 2000);
     }
-        
-
-    
     };
 
     useEffect(() => {

@@ -20,6 +20,7 @@ import PlaceOrder from "./pages/PlaceOrder";
 import Order from "./pages/Order";
 import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
+import Search from "./pages/Search";
 
 
 function App() {
@@ -48,6 +49,8 @@ function App() {
                 <Route path="/order/:id" element={<Order />} />
                 
                 <Route path="/orders" element={<Orders />} />
+
+                <Route path="/search" element={<Search />} />
 
                 <Route path="*" element={<NotFound />} />
             </Routes>
