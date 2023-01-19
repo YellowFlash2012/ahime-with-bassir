@@ -7,6 +7,8 @@ const initialState = {
     orders: [],
 
     order: {},
+
+    summary:{},
     
     clientId: null,
 
@@ -113,6 +115,27 @@ export const orderPay = createAsyncThunk("orders/orderPay", async (id, details, 
     }
 });
 
+//* admin section
+export const getAllSummaries = createAsyncThunk(
+    "orders/getAllSummaries",
+    async (id, thunkAPI) => {
+        try {
+            const res = await axios.get("/api/v1/orders/summary", {
+                headers: {
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
+
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
 export const ordersSlice = createSlice({
     name: "orders",
     initialState,
@@ -212,6 +235,25 @@ export const ordersSlice = createSlice({
         });
         builder.addCase(orderPay.rejected, (state, action) => {
             state.loadingPay = false;
+            state.isError = true;
+            state.error = action.payload;
+            toast.error(action.payload);
+        });
+        
+        //* get all summaries
+        builder.addCase(getAllSummaries.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(getAllSummaries.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isError = false;
+            console.log(action.payload);
+        
+            state.summary = action.payload;
+
+        });
+        builder.addCase(getAllSummaries.rejected, (state, action) => {
+            state.loading = false;
             state.isError = true;
             state.error = action.payload;
             toast.error(action.payload);

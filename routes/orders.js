@@ -1,9 +1,55 @@
 import express from "express"
 import asyncHandler from "express-async-handler"
-import { isAuth } from "../middlewares/auth.js";
+import { isAdmin, isAuth } from "../middlewares/auth.js";
 import Order from "../models/Order.js";
+import Product from "../models/Product.js";
+import User from "../models/User.js";
 
 const router = express.Router();
+
+// !admin routes
+router.get("/summary", isAuth, isAdmin, asyncHandler(async (req, res) => {
+    const orders = await Order.aggregate([
+        {
+            $group: {
+                _id: null,
+                numOrders: { $sum: 1 },
+                totalSales: { $sum: "$totalAmount" }
+            }
+        }
+    ]);
+
+    const users = await User.aggregate([
+        {
+            $group: {
+                _id: null,
+                numUsers: { $sum: 1 }
+            }
+        }
+    ]);
+
+    const dailyOrders = await Order.aggregate([
+        {
+            $group: {
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                orders: { $sum: 1 },
+                sales:{$sum:"$totalAmount"}
+            }
+        }
+    ])
+    
+    const productCategories = await Product.aggregate([
+        {
+            $group: {
+                _id: "$category",
+                count: { $sum: 1 },
+                
+            }
+        }
+    ])
+
+    res.status(200).send({ orders, users, dailyOrders, productCategories });
+}))
 
 // * place new order
 router.post("/", isAuth, asyncHandler(async (req, res) => {
@@ -20,7 +66,7 @@ router.post("/", isAuth, asyncHandler(async (req, res) => {
         taxAmount: req.body.taxAmount,
         totalAmount: req.body.totalAmount,
         
-        user: req.user.id
+        user: req.user._id
     });
 
     const order = await newOrder.save();
@@ -55,7 +101,7 @@ router.put("/:id/pay", isAuth, asyncHandler(async (req, res) => {
 // * get all logged in user's orders
 router.get("/", isAuth, asyncHandler(async (req, res) => {
     
-    const orders = await Order.find({user:req.user.id});
+    const orders = await Order.find({user:req.user._id});
     
     if (orders) {
         res.status(200).send(orders)
