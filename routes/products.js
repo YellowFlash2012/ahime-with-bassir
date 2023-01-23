@@ -1,8 +1,27 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
+import { isAdmin, isAuth } from "../middlewares/auth.js";
 import Product from "../models/Product.js";
 
 const router = express.Router();
+
+// *admin routes
+router.get("/admin", isAuth, isAdmin, asyncHandler(async (req, res) => {
+    const { query } = req;
+    const page = query.page || 1;
+    const pageSize = query.pageSize || PAGE_SIZE;
+
+    const products = await Product.find().skip(pageSize * (page - 1)).limit(pageSize);
+
+    const productsCount = await Product.countDocuments();
+
+    res.status(200).send({
+        products,
+        productsCount,
+        page,
+        pages:Math.ceil(productsCount/pageSize)
+    })
+}))
 
 // get all products
 router.get(
@@ -125,5 +144,6 @@ router.get(
         }
     })
 );
+
 
 export default router;

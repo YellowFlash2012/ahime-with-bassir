@@ -77,6 +77,26 @@ export const fetchSearchProducts = createAsyncThunk(
     }
 );
 
+export const getAllProductsByAdmin = createAsyncThunk(
+    "products/getAllProductsByAdmin",
+    async (page, thunkAPI) => {
+        try {
+            const res = await axios.get(`/api/v1/products/admin?page=${page}`, {
+                headers: {
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
+
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
 export const productsSlice = createSlice({
     name: "products",
     initialState,
@@ -148,6 +168,26 @@ export const productsSlice = createSlice({
             state.pages = action.payload.pages;
         });
         builder.addCase(fetchSearchProducts.rejected, (state, action) => {
+            state.loading = false;
+            state.isError = true;
+            state.error = action.payload;
+            
+        });
+        
+        // fetch all products by admin
+        builder.addCase(getAllProductsByAdmin.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(getAllProductsByAdmin.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isError = false;
+            state.products = action.payload.products;
+        
+            state.countProducts = action.payload.productsCount;
+            state.page = action.payload.page;
+            state.pages = action.payload.pages;
+        });
+        builder.addCase(getAllProductsByAdmin.rejected, (state, action) => {
             state.loading = false;
             state.isError = true;
             state.error = action.payload;

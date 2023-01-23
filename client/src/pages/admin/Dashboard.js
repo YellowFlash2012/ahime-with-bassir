@@ -13,13 +13,9 @@ import MoonLoader from "react-spinners/MoonLoader";
 const Dashboard = () => {
     const dispatch = useDispatch();
 
-    
-    
     const { user } = useSelector(store => store.auth);
 
     const { loading, error, summary } = useSelector(store => store.orders);
-
-    console.log(summary.dailyOrders);
     
     useEffect(() => {
         dispatch(getAllSummaries())
