@@ -107,3 +107,8 @@ transition: 0.5s;
   left: 0;
 
 }
+
+.btn-standard {
+  width: 12rem;
+  height: 2.5rem;
+}

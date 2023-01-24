@@ -1,15 +1,17 @@
 import { useEffect } from "react";
-import { Container } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+
 import Loading from "../../components/Loading";
 import MessageBox from "../../components/MessageBox";
-import { getAllProductsByAdmin } from "../../features/productsSlice";
+import MoonLoading from "../../components/MoonLoading";
+import { createNewProductByAdmin, getAllProductsByAdmin } from "../../features/productsSlice";
 
 const ProductsList = () => {
     const dispatch = useDispatch();
 
-    const { loading, error, products, pages } = useSelector(store => store.products);
+    const { loading, loadingCreate,createError, error, products, pages } = useSelector(store => store.products);
 
     const { search, pathname } = useLocation();
 
@@ -17,13 +19,30 @@ const ProductsList = () => {
 
     const page = sp.get('page') || 1;
 
+    const createProductHandler = async () => {
+        if (window.confirm("You are about to create a new product, Continue?")) {
+            dispatch(createNewProductByAdmin())
+        }
+    }
+
     useEffect(() => {
         dispatch(
         getAllProductsByAdmin(page))
     },[page, dispatch])
 
     return <Container>
+        <Row className="mt-3">
+            <Col>
         <h1>Products</h1>
+            
+            </Col>
+            
+            <Col className="col text-end">
+                <div>
+                    <Button className="btn-standard" type="button" onClick={createProductHandler}>{loadingCreate ? <MoonLoading/> : "Create Product"}</Button>
+                </div>
+            </Col>
+        </Row>
 
         {loading ? <Loading /> : error ? <MessageBox variant="danger">{error}</MessageBox> : (<>
             <table className="table">

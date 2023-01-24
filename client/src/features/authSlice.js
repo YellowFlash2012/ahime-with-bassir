@@ -87,6 +87,10 @@ export const authSlice = createSlice({
 
             localStorage.setItem("user", JSON.stringify(action.payload))
 
+            if (action.payload.isAdmin) {
+                window.location.href=("/admin/dashboard")
+            }
+
             toast.success(`Welcome back, ${action.payload.name}`)
         });
         builder.addCase(loginUser.rejected, (state, action) => {

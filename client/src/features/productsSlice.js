@@ -12,6 +12,9 @@ const initialState = {
     countProducts:null,
     categories:[],
     product:{},
+    loadingCreate: false,
+    createIsError:false,
+    createError: "",
     loading: false,
     isError:false,
     error: ""
@@ -89,6 +92,26 @@ export const getAllProductsByAdmin = createAsyncThunk(
                 },
             });
 
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
+export const createNewProductByAdmin = createAsyncThunk(
+    "products/createNewProductByAdmin",
+    async (id, thunkAPI) => {
+        console.log(thunkAPI.getState().auth.user.token);
+        try {
+            const res = await axios.post("/api/v1/products", {
+                headers: {
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
             return res.data;
         } catch (error) {
             // console.log(error.message);
@@ -192,6 +215,26 @@ export const productsSlice = createSlice({
             state.isError = true;
             state.error = action.payload;
             
+        });
+        
+        // create new product by admin
+        builder.addCase(createNewProductByAdmin.pending, (state) => {
+            state.loadingCreate = true;
+        });
+        builder.addCase(createNewProductByAdmin.fulfilled, (state, action) => {
+            state.loadingCreate = false;
+            state.createIsError = false;
+            // state.product = action.payload.product;
+        
+            toast.success(action.payload.message)
+
+            window.location.href=(`/admin/product/${action.payload.product._id}`)
+        });
+        builder.addCase(createNewProductByAdmin.rejected, (state, action) => {
+            state.loadingCreate = false;
+            state.createIsError = true;
+            state.createError = action.payload;
+            toast.error(action.payload)
         });
     },
 });

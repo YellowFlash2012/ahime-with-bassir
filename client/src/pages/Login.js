@@ -29,15 +29,17 @@ const Login = () => {
         dispatch(loginUser({ email, password }))
         
         // console.log(isError);
-        if (!isError) {
-            navigate(redirect || "/")
-            
-        }
+        // console.log(user);
+        if (!isError && !user.isAdmin) {
+            navigate(redirect || "/");
+        } 
     }
 
     useEffect(() => {
         if (user) {
             navigate(redirect)
+
+            return;
         }
     },[navigate, redirect, user])
 
@@ -76,7 +78,7 @@ const Login = () => {
                     </FormGroup>
 
                     <div className="mb-3">
-                        <Button type="submit">
+                        <Button type="submit" className="btn-standard">
                             {loading ? (<MoonLoading/>) : "Login"}
                         </Button>
                     </div>
