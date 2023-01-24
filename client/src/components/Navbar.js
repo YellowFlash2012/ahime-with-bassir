@@ -54,7 +54,7 @@ const NavbarComp = () => {
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
                         <Navbar.Collapse id="basic-navbar-nav">
-                            <SearchBox/>
+                            <SearchBox />
                             <Nav className="me-auto w-100 justify-content-end">
                                 <Link to="/cart" className="nav-link">
                                     Cart
@@ -73,17 +73,47 @@ const NavbarComp = () => {
                                         title={user.name}
                                         id="basic-nav-dropdown"
                                     >
-                                        <LinkContainer to="/profile">
-                                            <NavDropdown.Item>
-                                                Profile
-                                            </NavDropdown.Item>
-                                        </LinkContainer>
+                                        {user && !user.isAdmin ? (
+                                            <>
+                                                <LinkContainer to="/profile">
+                                                    <NavDropdown.Item>
+                                                        Profile
+                                                    </NavDropdown.Item>
+                                                </LinkContainer>
 
-                                        <LinkContainer to="/orders">
-                                            <NavDropdown.Item>
-                                                Order History
-                                            </NavDropdown.Item>
-                                        </LinkContainer>
+                                                <LinkContainer to="/orders">
+                                                    <NavDropdown.Item>
+                                                        Order History
+                                                    </NavDropdown.Item>
+                                                </LinkContainer>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <LinkContainer to="/admin/dashboard">
+                                                    <NavDropdown.Item>
+                                                        Dashboard
+                                                    </NavDropdown.Item>
+                                                </LinkContainer>
+
+                                                <LinkContainer to="/admin/products-list">
+                                                    <NavDropdown.Item>
+                                                        Products
+                                                    </NavDropdown.Item>
+                                                </LinkContainer>
+
+                                                <LinkContainer to="/admin/orders-list">
+                                                    <NavDropdown.Item>
+                                                        Orders
+                                                    </NavDropdown.Item>
+                                                </LinkContainer>
+
+                                                <LinkContainer to="/admin/users-list">
+                                                    <NavDropdown.Item>
+                                                        Users
+                                                    </NavDropdown.Item>
+                                                </LinkContainer>
+                                            </>
+                                        )}
 
                                         <NavDropdown.Divider />
                                         <Link
@@ -100,33 +130,6 @@ const NavbarComp = () => {
                                     </Link>
                                 )}
 
-                                {user && user.isAdmin && (
-                                    <NavDropdown title="Admin" id="admin-nav-dropdown">
-                                        <LinkContainer to="/admin/dashboard">
-                                            <NavDropdown.Item>
-                                                Dashboard
-                                            </NavDropdown.Item>
-                                        </LinkContainer>
-                                        
-                                        <LinkContainer to="/admin/products-list">
-                                            <NavDropdown.Item>
-                                                Products
-                                            </NavDropdown.Item>
-                                        </LinkContainer>
-                                        
-                                        <LinkContainer to="/admin/orders-list">
-                                            <NavDropdown.Item>
-                                                Orders
-                                            </NavDropdown.Item>
-                                        </LinkContainer>
-                                        
-                                        <LinkContainer to="/admin/users-list">
-                                            <NavDropdown.Item>
-                                                Users
-                                            </NavDropdown.Item>
-                                        </LinkContainer>
-                                    </NavDropdown>
-                                )}
                             </Nav>
                         </Navbar.Collapse>
                     </Container>
@@ -141,11 +144,20 @@ const NavbarComp = () => {
                 }
             >
                 <Nav className="flex-column text-white w-100 p-2">
-                    <NavItem><strong>Categories</strong></NavItem>
+                    <NavItem>
+                        <strong>Categories</strong>
+                    </NavItem>
 
-                    {categories.map(category => (
+                    {categories.map((category) => (
                         <NavItem key={category}>
-                            <LinkContainer to={{pathname:"/search", hash:"#hash", search:`category=${category}`}} onClick={()=>setSidebarOpen(false)}>
+                            <LinkContainer
+                                to={{
+                                    pathname: "/search",
+                                    hash: "#hash",
+                                    search: `category=${category}`,
+                                }}
+                                onClick={() => setSidebarOpen(false)}
+                            >
                                 <NavLink>{category}</NavLink>
                             </LinkContainer>
                         </NavItem>

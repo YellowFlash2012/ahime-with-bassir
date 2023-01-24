@@ -11,10 +11,12 @@ const initialState = {
     pages: null,
     countProducts:null,
     categories:[],
-    product:{},
+    product: {},
+    
     loadingCreate: false,
     createIsError:false,
     createError: "",
+
     loading: false,
     isError:false,
     error: ""
@@ -102,7 +104,7 @@ export const getAllProductsByAdmin = createAsyncThunk(
 
 export const createNewProductByAdmin = createAsyncThunk(
     "products/createNewProductByAdmin",
-    async (id, thunkAPI) => {
+    async (_, thunkAPI) => {
         console.log(thunkAPI.getState().auth.user.token);
         try {
             const res = await axios.post("/api/v1/products", {
@@ -120,6 +122,20 @@ export const createNewProductByAdmin = createAsyncThunk(
     }
 );
 
+export const fetchProductByIdByAdmin = createAsyncThunk(
+    "products/fetchProductByIdByAdmin",
+    async (id, thunkAPI) => {
+        
+        try {
+            const res = await axios.get(`/api/v1/products/${id}`);
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
 export const productsSlice = createSlice({
     name: "products",
     initialState,
@@ -128,38 +144,34 @@ export const productsSlice = createSlice({
 
     extraReducers: (builder) => {
         // fetch all products
-        builder
-            .addCase(fetchProducts.pending, (state) => {
-                state.loading = true;
-            })
-            builder.addCase(fetchProducts.fulfilled, (state, action) => {
-                state.loading = false;
-                state.isError = false;
-                state.products = action.payload;
-            })
+        builder.addCase(fetchProducts.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(fetchProducts.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isError = false;
+            state.products = action.payload;
+        });
         builder.addCase(fetchProducts.rejected, (state, action) => {
             state.loading = false;
             state.isError = true;
             state.error = action.payload;
-        
-        })
-        
+        });
+
         // get all categories
-        builder
-            .addCase(getAllCategoriess.pending, (state) => {
-                state.loading = true;
-            })
-            builder.addCase(getAllCategoriess.fulfilled, (state, action) => {
-                state.loading = false;
-                state.isError = false;
-                state.categories = action.payload;
-            })
+        builder.addCase(getAllCategoriess.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(getAllCategoriess.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isError = false;
+            state.categories = action.payload;
+        });
         builder.addCase(getAllCategoriess.rejected, (state, action) => {
             state.loading = false;
             state.isError = true;
             state.error = action.payload;
-        
-        })
+        });
 
         // fetch a single product
         builder.addCase(fetchSingleProduct.pending, (state) => {
@@ -174,9 +186,8 @@ export const productsSlice = createSlice({
             state.loading = false;
             state.isError = true;
             state.error = action.payload;
-            
         });
-        
+
         // fetch all search products
         builder.addCase(fetchSearchProducts.pending, (state) => {
             state.loading = true;
@@ -194,18 +205,20 @@ export const productsSlice = createSlice({
             state.loading = false;
             state.isError = true;
             state.error = action.payload;
-            
         });
-        
+
+        // ***admin section
+
         // fetch all products by admin
         builder.addCase(getAllProductsByAdmin.pending, (state) => {
             state.loading = true;
+            state.product = {};
         });
         builder.addCase(getAllProductsByAdmin.fulfilled, (state, action) => {
             state.loading = false;
             state.isError = false;
             state.products = action.payload.products;
-        
+
             state.countProducts = action.payload.productsCount;
             state.page = action.payload.page;
             state.pages = action.payload.pages;
@@ -214,9 +227,8 @@ export const productsSlice = createSlice({
             state.loading = false;
             state.isError = true;
             state.error = action.payload;
-            
         });
-        
+
         // create new product by admin
         builder.addCase(createNewProductByAdmin.pending, (state) => {
             state.loadingCreate = true;
@@ -225,16 +237,32 @@ export const productsSlice = createSlice({
             state.loadingCreate = false;
             state.createIsError = false;
             // state.product = action.payload.product;
-        
-            toast.success(action.payload.message)
 
-            window.location.href=(`/admin/product/${action.payload.product._id}`)
+            toast.success(action.payload.message);
+
+            window.location.href = `/admin/product/${action.payload.product._id}`;
         });
         builder.addCase(createNewProductByAdmin.rejected, (state, action) => {
             state.loadingCreate = false;
             state.createIsError = true;
             state.createError = action.payload;
-            toast.error(action.payload)
+            toast.error(action.payload);
+        });
+
+        // fetch a single product by id by admin
+        builder.addCase(fetchProductByIdByAdmin.pending, (state) => {
+            state.loading = true;
+            state.product = {};
+        });
+        builder.addCase(fetchProductByIdByAdmin.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isError = false;
+            state.product = action.payload;
+        });
+        builder.addCase(fetchProductByIdByAdmin.rejected, (state, action) => {
+            state.loading = false;
+            state.isError = true;
+            state.error = action.payload;
         });
     },
 });

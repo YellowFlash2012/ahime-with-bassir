@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import Loading from "../../components/Loading";
 import MessageBox from "../../components/MessageBox";
@@ -10,6 +10,7 @@ import { createNewProductByAdmin, getAllProductsByAdmin } from "../../features/p
 
 const ProductsList = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { loading, loadingCreate,createError, error, products, pages } = useSelector(store => store.products);
 
@@ -65,7 +66,9 @@ const ProductsList = () => {
                             <td>{ pdt.price}</td>
                             <td>{ pdt.category}</td>
                             <td>{ pdt.brand}</td>
-                            <td></td>
+                            <td>
+                                <Button variant="light" type="button" onClick={()=>navigate(`/admin/product/${pdt._id}`)}>Edit</Button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
