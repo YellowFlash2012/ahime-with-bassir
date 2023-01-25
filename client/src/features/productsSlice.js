@@ -16,6 +16,10 @@ const initialState = {
     loadingCreate: false,
     createIsError:false,
     createError: "",
+    
+    loadingUpdate: false,
+    updateIsError:false,
+    updateError: "",
 
     loading: false,
     isError:false,
@@ -125,9 +129,30 @@ export const createNewProductByAdmin = createAsyncThunk(
 export const fetchProductByIdByAdmin = createAsyncThunk(
     "products/fetchProductByIdByAdmin",
     async (id, thunkAPI) => {
-        
+
         try {
             const res = await axios.get(`/api/v1/products/${id}`);
+        
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
+export const updateProductByAdmin = createAsyncThunk(
+    "products/updateProductByAdmin",
+    async (id, productData, thunkAPI) => {
+        
+        try {
+            const res = await axios.put(`/api/v1/products${id}`, productData, {
+                headers: {
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
             return res.data;
         } catch (error) {
             // console.log(error.message);
@@ -258,11 +283,29 @@ export const productsSlice = createSlice({
             state.loading = false;
             state.isError = false;
             state.product = action.payload;
+        
         });
         builder.addCase(fetchProductByIdByAdmin.rejected, (state, action) => {
             state.loading = false;
             state.isError = true;
             state.error = action.payload;
+        });
+        
+        // update a product by admin
+        builder.addCase(updateProductByAdmin.pending, (state) => {
+            state.loadingUpdate = true;
+
+        });
+        builder.addCase(updateProductByAdmin.fulfilled, (state, action) => {
+            state.loadingUpdate = false;
+            state.updateIsError = false;
+            toast.success(action.payload.message)
+            window.location.href = "/admin/products-list";
+        });
+        builder.addCase(updateProductByAdmin.rejected, (state, action) => {
+            state.loadingUpdate = false;
+            state.updateIsError = true;
+            state.updateError = action.payload;
         });
     },
 });

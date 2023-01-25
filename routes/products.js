@@ -154,7 +154,9 @@ router.get(
 router.get(
     "/:id",
     asyncHandler(async (req, res) => {
+        
         const product = await Product.findById(req.params.id);
+        
 
         if (product) {
             res.status(200).send(product);
@@ -176,6 +178,27 @@ router.get(
         }
     })
 );
+
+// update product by admin
+router.put("/:id", isAuth, isAdmin, asyncHandler(async (req, res) => {
+    const product = await Product.findById(req.params.id);
+
+    if (product) {
+        product.name = req.body.name;
+        product.price = req.body.price;
+        product.image = req.body.image;
+        product.category = req.body.category;
+        product.brand = req.body.brand;
+        product.countInStock = req.body.countInStock;
+        product.description = req.body.description;
+
+        await product.save()
+
+        res.status(201).send({message:"Product updated successfully!"})
+    } else {
+        res.status(404).send({message:"Product Not Found!"})
+    }
+}))
 
 
 export default router;

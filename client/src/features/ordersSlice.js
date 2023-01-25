@@ -247,7 +247,7 @@ export const ordersSlice = createSlice({
         builder.addCase(getAllSummaries.fulfilled, (state, action) => {
             state.loading = false;
             state.isError = false;
-            console.log(action.payload);
+            // console.log(action.payload);
         
             state.summary = action.payload;
 

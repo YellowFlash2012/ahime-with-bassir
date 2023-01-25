@@ -12,30 +12,34 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../../components/Loading";
 import MessageBox from "../../components/MessageBox";
-import { fetchProductByIdByAdmin } from "../../features/productsSlice";
+import MoonLoading from "../../components/MoonLoading";
+import { fetchProductByIdByAdmin, updateProductByAdmin } from "../../features/productsSlice";
 
 const ProductEdit = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { product, loading, error } = useSelector((store) => store.products);
+    const { product, loading, error, loadingUpdate } = useSelector((store) => store.products);
 
-    const [name, setName] = useState(product?.name || "");
-    const [slug, setSlug] = useState(product?.slug || "");
-    const [price, setPrice] = useState(product?.price || "");
-    const [image, setImage] = useState(product?.image || "");
-    const [category, setCategory] = useState(product?.category || "");
-    const [brand, setBrand] = useState(product?.brand || "");
-    const [description, setDescription] = useState(product?.description || "");
+    const [name, setName] = useState(product?.name);
+    const [slug, setSlug] = useState(product?.slug);
+    const [price, setPrice] = useState(product?.price);
+    const [image, setImage] = useState(product?.image);
+    const [category, setCategory] = useState(product?.category);
+    const [brand, setBrand] = useState(product?.brand);
+    const [description, setDescription] = useState(product?.description);
     const [countInStock, setCountInStock] = useState(
-        product?.countInStock || ""
+        product?.countInStock
     );
 
-    console.log(name, brand, description);
+    const updateProductHandler = (e) => {
+        e.preventDefault();
+        dispatch(updateProductByAdmin({ _id: id, name, slug, price, image, category, brand, description, countInStock }));
+    }
 
     useEffect(() => {
-        
+    
         dispatch(fetchProductByIdByAdmin(id));
     }, [id, dispatch]);
 
@@ -52,7 +56,7 @@ const ProductEdit = () => {
             ) : error ? (
                 <MessageBox variant="danger">{error}</MessageBox>
             ) : (
-                <Form>
+                <Form onSubmit={updateProductHandler}>
                     <FormGroup className="mb-3" controlId="name">
                         <FormLabel>Name</FormLabel>
                         <FormControl
@@ -127,7 +131,7 @@ const ProductEdit = () => {
 
                     <div className="mb-3">
                         <Button className="btn-standard me-5" type="submit">
-                            Update
+                            {loadingUpdate ? (<MoonLoading/>) : "Update"}
                         </Button>
 
                         <Button
