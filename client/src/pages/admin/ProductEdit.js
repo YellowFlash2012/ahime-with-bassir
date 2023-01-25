@@ -13,14 +13,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../../components/Loading";
 import MessageBox from "../../components/MessageBox";
 import MoonLoading from "../../components/MoonLoading";
-import { fetchProductByIdByAdmin, updateProductByAdmin } from "../../features/productsSlice";
+import { fetchProductByIdByAdmin, updateProductByAdmin, uploadImageByAdmin } from "../../features/productsSlice";
 
 const ProductEdit = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { product, loading, error, loadingUpdate } = useSelector((store) => store.products);
+    const { product, loading, error, loadingUpdate, loadingUpload, imageURL } =
+        useSelector((store) => store.products);
 
     const [name, setName] = useState(product?.name);
     const [slug, setSlug] = useState(product?.slug);
@@ -36,6 +37,16 @@ const ProductEdit = () => {
     const updateProductHandler = (e) => {
         e.preventDefault();
         dispatch(updateProductByAdmin({ _id: id, name, slug, price, image, category, brand, description, countInStock }));
+    }
+
+    const uploadFileHandler = (e) => {
+        const file = e.target.file[0];
+        const bodyFormData = new FormData();
+        bodyFormData.append('file', file)
+
+        dispatch(uploadImageByAdmin(bodyFormData))
+
+        setImage(imageURL)
     }
 
     useEffect(() => {
@@ -91,7 +102,13 @@ const ProductEdit = () => {
                             onChange={(e) => setImage(e.target.value)}
                             required
                         />
-                    </FormGroup>
+                            </FormGroup>
+                            
+                            <FormGroup className="mb-3" controlId="imageFile">
+                                <FormLabel>Upload File</FormLabel>
+
+                                {loadingUpload ? (<MoonLoading/>) : <FormControl type="file" onChange={uploadFileHandler}/>}
+                            </FormGroup>
 
                     <FormGroup className="mb-3" controlId="category">
                         <FormLabel>Category</FormLabel>

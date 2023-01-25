@@ -20,6 +20,11 @@ const initialState = {
     loadingUpdate: false,
     updateIsError:false,
     updateError: "",
+    
+    loadingUpload: false,
+    uploadIsError:false,
+    uploadError: "",
+    imageURL:"",
 
     loading: false,
     isError:false,
@@ -148,6 +153,26 @@ export const updateProductByAdmin = createAsyncThunk(
         try {
             const res = await axios.put(`/api/v1/products${id}`, productData, {
                 headers: {
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
+export const uploadImageByAdmin = createAsyncThunk(
+    "products/uploadImageByAdmin",
+    async (file, thunkAPI) => {
+        try {
+            const res = await axios.put('/api/v1/uploads', file, {
+                headers: {
+                    "Content-Type":"multipart/form-data",
                     authorization: `Bearer ${
                         thunkAPI.getState().auth.user.token
                     }`,
@@ -306,6 +331,25 @@ export const productsSlice = createSlice({
             state.loadingUpdate = false;
             state.updateIsError = true;
             state.updateError = action.payload;
+        });
+        
+        // upload image by admin
+        builder.addCase(uploadImageByAdmin.pending, (state) => {
+            state.loadingUpload = true;
+
+        });
+        builder.addCase(uploadImageByAdmin.fulfilled, (state, action) => {
+            state.loadingUpload = false;
+            state.uploadIsError = false;
+            state.imageURL = action.payload.secure_url;
+
+            toast.success("Your image was successfully uploaded!")
+        
+        });
+        builder.addCase(uploadImageByAdmin.rejected, (state, action) => {
+            state.loadingUpload = false;
+            state.uploadIsError = true;
+            state.uploadError = action.payload;
         });
     },
 });

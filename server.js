@@ -10,6 +10,7 @@ import seedRoutes from "./routes/seedRoutes.js"
 import productRoutes from "./routes/products.js"
 import orderRoutes from "./routes/orders.js"
 import userRoutes from "./routes/users.js"
+import uploadRoutes from "./routes/uploads.js"
 import path from "path"
 
 
@@ -35,6 +36,7 @@ app.use("/api/v1/products", productRoutes)
 app.use("/api/v1/orders", orderRoutes)
 
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/uploads", uploadRoutes)
 
 // ***heroku deploy config
 const __dirname = path.resolve();
