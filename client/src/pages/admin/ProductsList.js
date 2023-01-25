@@ -6,13 +6,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import MessageBox from "../../components/MessageBox";
 import MoonLoading from "../../components/MoonLoading";
-import { createNewProductByAdmin, getAllProductsByAdmin } from "../../features/productsSlice";
+import { createNewProductByAdmin, deleteProductByAdmin, getAllProductsByAdmin, resetDelete } from "../../features/productsSlice";
 
 const ProductsList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { loading, loadingCreate,createError, error, products, pages } = useSelector(store => store.products);
+    const { loading, loadingCreate,createError, error, products, pages, loadingDelete, successDelete } = useSelector(store => store.products);
 
     const { search, pathname } = useLocation();
 
@@ -26,10 +26,22 @@ const ProductsList = () => {
         }
     }
 
+    const deleteProductHandler = (pdt) => {
+        if (window.confirm("Are you sure you want to delete this products?")) {
+            dispatch(deleteProductByAdmin(pdt))
+            
+        }
+    }
+
     useEffect(() => {
-        dispatch(
-        getAllProductsByAdmin(page))
-    },[page, dispatch])
+        if (successDelete) {
+            dispatch(resetDelete())
+        } else {
+            
+            dispatch(
+            getAllProductsByAdmin(page))
+        }
+    },[page, dispatch, successDelete])
 
     return <Container>
         <Row className="mt-3">
@@ -40,7 +52,7 @@ const ProductsList = () => {
             
             <Col className="col text-end">
                 <div>
-                    <Button className="btn-standard" type="button" onClick={createProductHandler}>{loadingCreate ? <MoonLoading/> : "Create Product"}</Button>
+                    {loadingCreate ? (<MoonLoading/>) : <Button className="btn-standard" type="button" onClick={createProductHandler}>Create Product</Button>}
                 </div>
             </Col>
         </Row>
@@ -67,7 +79,9 @@ const ProductsList = () => {
                             <td>{ pdt.category}</td>
                             <td>{ pdt.brand}</td>
                             <td>
-                                <Button variant="light" type="button" onClick={()=>navigate(`/admin/product/${pdt._id}`)}>Edit</Button>
+                                <Button className="me-2" variant="light" type="button" onClick={()=>navigate(`/admin/product/${pdt._id}`)}>Edit</Button>
+
+                                {loadingDelete ? (<MoonLoading/>) : <Button type="button" variant="danger" onClick={()=>deleteProductHandler(pdt)}>Delete</Button>}
                             </td>
                         </tr>
                     ))}

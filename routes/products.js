@@ -200,5 +200,17 @@ router.put("/:id", isAuth, isAdmin, asyncHandler(async (req, res) => {
     }
 }))
 
+// delete product by admin
+router.delete("/:id", isAuth, isAdmin, asyncHandler(async(req, res) => {
+    const product = await Product.findById(req.params.id);
+
+    if (product) {
+        await product.remove()
+
+        res.send({message:"Product deleted!"})
+    } else {
+        res.status(404).send({message:"Product NOT found!"})
+    }
+}))
 
 export default router;

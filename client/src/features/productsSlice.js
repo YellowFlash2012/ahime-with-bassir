@@ -25,6 +25,11 @@ const initialState = {
     uploadIsError:false,
     uploadError: "",
     imageURL:"",
+    
+    loadingDelete: false,
+    successDelete: false,
+    deleteIsError:false,
+    deleteError: "",
 
     loading: false,
     isError:false,
@@ -186,10 +191,34 @@ export const uploadImageByAdmin = createAsyncThunk(
     }
 );
 
+export const deleteProductByAdmin = createAsyncThunk(
+    "products/deleteProductByAdmin",
+    async (pdt, thunkAPI) => {
+        try {
+            const res = await axios.delete(`/api/v1/products/${pdt._id}`, {
+                headers: {
+                    
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
 export const productsSlice = createSlice({
     name: "products",
     initialState,
     reducers: {
+        resetDelete: (state) => {
+            state.loadingDelete = false;
+            state.successDelete = false;
+        }
     },
 
     extraReducers: (builder) => {
@@ -262,7 +291,7 @@ export const productsSlice = createSlice({
         // fetch all products by admin
         builder.addCase(getAllProductsByAdmin.pending, (state) => {
             state.loading = true;
-            state.product = {};
+        
         });
         builder.addCase(getAllProductsByAdmin.fulfilled, (state, action) => {
             state.loading = false;
@@ -314,6 +343,7 @@ export const productsSlice = createSlice({
             state.loading = false;
             state.isError = true;
             state.error = action.payload;
+            toast.error(action.payload)
         });
         
         // update a product by admin
@@ -331,6 +361,7 @@ export const productsSlice = createSlice({
             state.loadingUpdate = false;
             state.updateIsError = true;
             state.updateError = action.payload;
+            toast.error(action.payload)
         });
         
         // upload image by admin
@@ -350,10 +381,33 @@ export const productsSlice = createSlice({
             state.loadingUpload = false;
             state.uploadIsError = true;
             state.uploadError = action.payload;
+            toast.error(action.payload)
+        });
+        
+        // delete product by admin
+        builder.addCase(deleteProductByAdmin.pending, (state) => {
+            state.loadingDelete = true;
+            state.successDelete = false;
+
+        });
+        builder.addCase(deleteProductByAdmin.fulfilled, (state, action) => {
+            state.loadingDelete = false;
+            state.deleteIsError = false;
+            state.successDelete = true;
+
+            toast.success(action.payload.message)
+        
+        });
+        builder.addCase(deleteProductByAdmin.rejected, (state, action) => {
+            state.loadingDelete = false;
+            state.successDelete = false;
+            state.deleteIsError = true;
+            state.deleteError = action.payload;
+            toast.error(action.payload)
         });
     },
 });
 
-export const {} = productsSlice.actions;
+export const { resetDelete } = productsSlice.actions;
 
 export default productsSlice.reducer;
