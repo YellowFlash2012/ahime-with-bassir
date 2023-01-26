@@ -13,7 +13,12 @@ const initialState = {
     clientId: null,
 
     loadingPay:false,
-    successPay:false,
+    successPay: false,
+    
+    loadingDeliver:false,
+    successDeliver: false,
+    deliverIsError: false,
+    deliverError:"",
     
     loading: false,
     isError: false,
@@ -156,6 +161,26 @@ export const getAllOrdersByAdmin = createAsyncThunk(
     }
 );
 
+export const deliverOrderByAdmin = createAsyncThunk(
+    "orders/deliverOrderByAdmin",
+    async (id, thunkAPI) => {
+        try {
+            const res = await axios.put(`/api/v1/orders/${id}/deliver`, {
+                headers: {
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
+
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
 export const ordersSlice = createSlice({
     name: "orders",
     initialState,
@@ -164,6 +189,10 @@ export const ordersSlice = createSlice({
         payReset: (state) => {
             state.loadingPay = false;
             state.successPay = false;
+        },
+        deliverReset: (state) => {
+            state.loadingDeliver = false;
+            state.successDeliver = false;
         }
     },
 
@@ -288,9 +317,27 @@ export const ordersSlice = createSlice({
             state.error = action.payload;
             toast.error(action.payload);
         });
+
+        //* deliver order by admin
+        builder.addCase(deliverOrderByAdmin.pending, (state) => {
+            state.loadingDeliver = true;
+        });
+        builder.addCase(deliverOrderByAdmin.fulfilled, (state, action) => {
+            state.loadingDeliver = false;
+            state.deliverIsError = false;
+            state.successDeliver = true;
+
+            toast.success(action.payload.message);
+        });
+        builder.addCase(deliverOrderByAdmin.rejected, (state, action) => {
+            state.loadingDeliver = false;
+            state.deliverIsError = true;
+            state.deliverError = action.payload;
+            toast.error(action.payload);
+        });
     },
 });
 
-export const { payReset } = ordersSlice.actions;
+export const { payReset, deliverReset } = ordersSlice.actions;
 
 export default ordersSlice.reducer;

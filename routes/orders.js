@@ -121,6 +121,22 @@ router.get("/", isAuth, isAdmin, asyncHandler(async (req, res) => {
     res.status(200).send(orders)
 }))
 
+// * deliver an order by admin
+router.put("/:id/deliver", isAuth, isAdmin, asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    
+    if (order) {
+        order.isDelivered = true;
+        order.deliveredAt = Date.now();
+        
+        await order.save();
+        
+        res.send({ message: "Order delivered!"});
+    } else {
+        res.status(404).send({ message: "Order Not Found!" });
+    }
+}))
+
 // * get order by id
 router.get("/:id", isAuth, asyncHandler(async (req, res) => {
     

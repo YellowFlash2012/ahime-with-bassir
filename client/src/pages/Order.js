@@ -1,6 +1,6 @@
 
 import { useEffect } from "react";
-import { Card, Col, ListGroup, ListGroupItem, Row } from "react-bootstrap";
+import { Button, Card, Col, ListGroup, ListGroupItem, Row } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -11,9 +11,10 @@ import {
 
 import Loading from "../components/Loading";
 import MessageBox from "../components/MessageBox";
-import { getOrder, loadPaypalScript, orderPay, payReset } from "../features/ordersSlice";
+import { deliverOrderByAdmin, deliverReset, getOrder, loadPaypalScript, orderPay, payReset } from "../features/ordersSlice";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
+import MoonLoading from "../components/MoonLoading";
 
 const Order = () => {
 
@@ -25,7 +26,7 @@ const Order = () => {
     
     const { user } = useSelector(store => store.auth);
     
-    const { order, clientId, loading, error, successPay, loadingPay } = useSelector(store => store.orders);
+    const { order, clientId, loading, error, successPay, loadingPay, loadingDeliver, successDeliver } = useSelector(store => store.orders);
     
     const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
     const createOrder = (data, action) => {
@@ -55,11 +56,15 @@ const Order = () => {
 
     
     useEffect(() => {
-        if (!order._id || successPay || (order._id && order._id !== id)) {
+        if (successPay || successDeliver) {
             dispatch(getOrder(id));
 
             if (successPay) {
                 dispatch(payReset())
+            }
+
+            if (successDeliver) {
+                dispatch(deliverReset())
             }
         } else {
             dispatch(loadPaypalScript())
@@ -78,13 +83,11 @@ const Order = () => {
             })
         }
 
-        // if (!user) {
-        //     navigate("/login")
-
-        //     return;
-        // }
-
-    },[dispatch, navigate, id, order._id, user, clientId, successPay, paypalDispatch])
+    }, [dispatch, navigate, id, order._id, user, clientId, successPay, paypalDispatch, successDeliver])
+    
+    const deliverOrderHandler = () => {
+        dispatch(deliverOrderByAdmin(id))
+    }
 
     return (
         <div>
@@ -248,6 +251,14 @@ const Order = () => {
                                                         </div>
                                                         }
                                                         {loadingPay && <Loading/>}
+                                                    </ListGroupItem>
+                                                )}
+
+                                                {user.isAdmin && order.isPaid && !order.isDelivered && (
+                                                    <ListGroupItem>
+                                                        <div className="d-grid">
+                                                            {loadingDeliver ? <MoonLoading/> : <Button type="button" onClick={deliverOrderHandler}>Deliver Order</Button>}
+                                                        </div>
                                                     </ListGroupItem>
                                                 )}
                                     </ListGroup>

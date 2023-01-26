@@ -54,7 +54,7 @@ export const fetchProducts = createAsyncThunk(
 
 export const getAllCategoriess = createAsyncThunk(
     "products/getAllCategoriess",
-    async (id, thunkAPI) => {
+    async (_, thunkAPI) => {
         try {
             const res = await axios.get("/api/v1/products/categories");
 

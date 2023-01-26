@@ -15,7 +15,7 @@ const OrdersLIst = () => {
 
     useEffect(() => {
         dispatch(getAllOrdersByAdmin())
-    },[dispatch])
+    },[])
 
     return (
         <Container>
