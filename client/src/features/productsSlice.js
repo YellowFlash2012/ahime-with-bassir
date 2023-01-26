@@ -12,6 +12,8 @@ const initialState = {
     countProducts:null,
     categories:[],
     product: {},
+    productToEdit: {},
+
     
     loadingCreate: false,
     createIsError:false,
@@ -153,10 +155,10 @@ export const fetchProductByIdByAdmin = createAsyncThunk(
 
 export const updateProductByAdmin = createAsyncThunk(
     "products/updateProductByAdmin",
-    async (id, productData, thunkAPI) => {
+    async (productData, thunkAPI) => {
         
         try {
-            const res = await axios.put(`/api/v1/products${id}`, productData, {
+            const res = await axios.put(`/api/v1/products/${productData._id}`, productData, {
                 headers: {
                     authorization: `Bearer ${
                         thunkAPI.getState().auth.user.token
@@ -336,7 +338,7 @@ export const productsSlice = createSlice({
         builder.addCase(fetchProductByIdByAdmin.fulfilled, (state, action) => {
             state.loading = false;
             state.isError = false;
-            state.product = action.payload;
+            state.productToEdit = action.payload;
         
         });
         builder.addCase(fetchProductByIdByAdmin.rejected, (state, action) => {

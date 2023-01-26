@@ -76,4 +76,45 @@ router.put("/profile", isAuth, asyncHandler(async (req, res) => {
     }
 }))
 
+// get one single user by admin
+router.get(
+    "/:id",
+    isAuth,
+    isAdmin,
+    asyncHandler(async (req, res) => {
+        const user = await User.findById(req.params.id);
+
+        if (user) {
+            res.status(200).send(user)
+        } else {
+            res.status(404).send({message:"user NOT found!"});
+            
+        }
+
+    })
+);
+
+// update one single user by admin
+router.put(
+    "/:id",
+    isAuth,
+    isAdmin,
+    asyncHandler(async (req, res) => {
+        const user = await User.findById(req.params.id);
+console.log(req.params.id);
+        if (user) {
+            user.name = req.body.name || user.name;
+            user.email = req.body.email || user.email;
+            user.isAdmin = Boolean(req.body.name);
+
+            const updatedUser = await user.save();
+            res.status(201).send({ message: "User updated!", updatedUser });
+        } else {
+            res.status(404).send({message:"user NOT found!"});
+            
+        }
+
+    })
+);
+
 export default router

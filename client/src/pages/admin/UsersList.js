@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Container } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,9 @@ const UsersList = () => {
 
     useEffect(() => {
         dispatch(getAllUsersByAdmin())
-    },[])
+    }, [])
+    
+    const deleteUserHandler=(user)=>{}
 
     return (
         <Container>
@@ -49,7 +51,11 @@ const UsersList = () => {
                                 <td>{user.name}</td>
                                 <td>{user.email}</td>
                                 <td>{user.isAdmin ? "Yes" : "No"}</td>
-                                <td></td>
+                                <td>
+                                    <Button className="me-2" variant="light" type="button" onClick={() => navigate(`/admin/user/${user._id}`)}>Edit</Button>
+                                    
+                                    <Button variant="danger" type="button" onClick={deleteUserHandler(user)}>Delete</Button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

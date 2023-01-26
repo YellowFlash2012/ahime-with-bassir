@@ -20,18 +20,18 @@ const ProductEdit = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { product, loading, error, loadingUpdate, loadingUpload, imageURL } =
+    const { productToEdit, loading, error, loadingUpdate, loadingUpload, imageURL } =
         useSelector((store) => store.products);
 
-    const [name, setName] = useState(product?.name);
-    const [slug, setSlug] = useState(product?.slug);
-    const [price, setPrice] = useState(product?.price);
-    const [image, setImage] = useState(product?.image);
-    const [category, setCategory] = useState(product?.category);
-    const [brand, setBrand] = useState(product?.brand);
-    const [description, setDescription] = useState(product?.description);
+    const [name, setName] = useState("");
+    const [slug, setSlug] = useState("");
+    const [price, setPrice] = useState("");
+    const [image, setImage] = useState("");
+    const [category, setCategory] = useState("");
+    const [brand, setBrand] = useState("");
+    const [description, setDescription] = useState("");
     const [countInStock, setCountInStock] = useState(
-        product?.countInStock
+        ""
     );
 
     const updateProductHandler = (e) => {
@@ -50,9 +50,16 @@ const ProductEdit = () => {
     }
 
     useEffect(() => {
-    
         dispatch(fetchProductByIdByAdmin(id));
-    }, [id, dispatch]);
+        setName(productToEdit?.name);
+        setSlug(productToEdit?.slug);
+        setPrice(productToEdit?.price);
+        setImage(productToEdit?.image);
+        setCategory(productToEdit?.category);
+        setBrand(productToEdit?.brand);
+        setDescription(productToEdit?.description);
+        setCountInStock(productToEdit?.countInStock);
+    }, [id, dispatch, productToEdit?.name]);
 
     return (
         <Container className="small-container">
