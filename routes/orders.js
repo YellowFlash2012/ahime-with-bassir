@@ -99,7 +99,7 @@ router.put("/:id/pay", isAuth, asyncHandler(async (req, res) => {
 }))
 
 // * get all logged in user's orders
-router.get("/", isAuth, asyncHandler(async (req, res) => {
+router.get("/mine", isAuth, asyncHandler(async (req, res) => {
     
     const orders = await Order.find({user:req.user._id});
     
@@ -111,12 +111,21 @@ router.get("/", isAuth, asyncHandler(async (req, res) => {
 
 }))
 
+// ***admin section
+// get all orders by admin
+router.get("/", isAuth, isAdmin, asyncHandler(async (req, res) => {
+    const orders = await Order.find().populate("user", "name");
+
+    
+
+    res.status(200).send(orders)
+}))
+
 // * get order by id
 router.get("/:id", isAuth, asyncHandler(async (req, res) => {
-
-    console.log(req.params.id);
     
     const order = await Order.findById(req.params.id);
+    console.log(order);
 
     if (order) {
         res.status(200).send(order)

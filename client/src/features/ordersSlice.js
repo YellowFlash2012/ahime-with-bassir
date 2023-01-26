@@ -64,7 +64,7 @@ export const getAllOrders = createAsyncThunk(
     "orders/getAllOrders",
     async (id, thunkAPI) => {
         try {
-            const res = await axios.get("/api/v1/orders", {
+            const res = await axios.get("/api/v1/orders/mine", {
                 headers: {
                     authorization: `Bearer ${
                         thunkAPI.getState().auth.user.token
@@ -136,6 +136,26 @@ export const getAllSummaries = createAsyncThunk(
     }
 );
 
+export const getAllOrdersByAdmin = createAsyncThunk(
+    "orders/getAllOrdersByAdmin",
+    async (id, thunkAPI) => {
+        try {
+            const res = await axios.get("/api/v1/orders", {
+                headers: {
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
+
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
 export const ordersSlice = createSlice({
     name: "orders",
     initialState,
@@ -161,7 +181,6 @@ export const ordersSlice = createSlice({
             console.log(action.payload.order._id);
 
             toast.success(action.payload.message);
-            
         });
         builder.addCase(placeOrder.rejected, (state, action) => {
             state.loading = false;
@@ -169,7 +188,7 @@ export const ordersSlice = createSlice({
             state.error = action.payload;
             toast.error(action.payload);
         });
-        
+
         //* get a single order
         builder.addCase(getOrder.pending, (state) => {
             state.loading = true;
@@ -178,7 +197,6 @@ export const ordersSlice = createSlice({
             state.loading = false;
             state.isError = false;
             state.order = action.payload;
-
         });
         builder.addCase(getOrder.rejected, (state, action) => {
             state.loading = false;
@@ -186,7 +204,7 @@ export const ordersSlice = createSlice({
             state.error = action.payload;
             toast.error(action.payload);
         });
-        
+
         //* get all orders
         builder.addCase(getAllOrders.pending, (state) => {
             state.loading = true;
@@ -195,7 +213,6 @@ export const ordersSlice = createSlice({
             state.loading = false;
             state.isError = false;
             state.orders = action.payload;
-
         });
         builder.addCase(getAllOrders.rejected, (state, action) => {
             state.loading = false;
@@ -203,7 +220,7 @@ export const ordersSlice = createSlice({
             state.error = action.payload;
             toast.error(action.payload);
         });
-        
+
         //* load paypal script
         builder.addCase(loadPaypalScript.pending, (state) => {
             state.loading = true;
@@ -212,7 +229,6 @@ export const ordersSlice = createSlice({
             state.loading = false;
             state.isError = false;
             state.clientId = action.payload;
-
         });
         builder.addCase(loadPaypalScript.rejected, (state, action) => {
             state.loading = false;
@@ -220,7 +236,7 @@ export const ordersSlice = createSlice({
             state.error = action.payload;
             toast.error(action.payload);
         });
-        
+
         //* pay order
         builder.addCase(orderPay.pending, (state) => {
             state.loadingPay = true;
@@ -229,9 +245,8 @@ export const ordersSlice = createSlice({
             state.loadingPay = false;
             state.isError = false;
             state.successPay = true;
-            
-            toast.success("Successful payment!")
 
+            toast.success("Successful payment!");
         });
         builder.addCase(orderPay.rejected, (state, action) => {
             state.loadingPay = false;
@@ -239,7 +254,7 @@ export const ordersSlice = createSlice({
             state.error = action.payload;
             toast.error(action.payload);
         });
-        
+
         //* get all summaries
         builder.addCase(getAllSummaries.pending, (state) => {
             state.loading = true;
@@ -248,11 +263,26 @@ export const ordersSlice = createSlice({
             state.loading = false;
             state.isError = false;
             // console.log(action.payload);
-        
-            state.summary = action.payload;
 
+            state.summary = action.payload;
         });
         builder.addCase(getAllSummaries.rejected, (state, action) => {
+            state.loading = false;
+            state.isError = true;
+            state.error = action.payload;
+            toast.error(action.payload);
+        });
+
+        //* get all orders by admin
+        builder.addCase(getAllOrdersByAdmin.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(getAllOrdersByAdmin.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isError = false;
+            state.orders = action.payload;
+        });
+        builder.addCase(getAllOrdersByAdmin.rejected, (state, action) => {
             state.loading = false;
             state.isError = true;
             state.error = action.payload;
