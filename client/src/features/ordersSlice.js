@@ -20,6 +20,11 @@ const initialState = {
     deliverIsError: false,
     deliverError:"",
     
+    loadingDelete: false,
+    successDelete: false,
+    deleteIsError: false,
+    deleteError:"",
+    
     loading: false,
     isError: false,
     error: "",
@@ -56,7 +61,7 @@ export const getOrder = createAsyncThunk(
                 },
             });
 
-        
+        console.log(res.data);
             return res.data;
         } catch (error) {
             // console.log(error.message);
@@ -181,6 +186,26 @@ export const deliverOrderByAdmin = createAsyncThunk(
     }
 );
 
+export const deleteOrderByAdmin = createAsyncThunk(
+    "orders/deleteOrderByAdmin",
+    async (order, thunkAPI) => {
+        try {
+            const res = await axios.delete(`/api/v1/orders/${order._id}`, {
+                headers: {
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
+
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
 export const ordersSlice = createSlice({
     name: "orders",
     initialState,
@@ -193,6 +218,10 @@ export const ordersSlice = createSlice({
         deliverReset: (state) => {
             state.loadingDeliver = false;
             state.successDeliver = false;
+        },
+        deleteReset: (state) => {
+            state.loadingDelete = false;
+            state.successDelete = false;
         }
     },
 
@@ -335,9 +364,27 @@ export const ordersSlice = createSlice({
             state.deliverError = action.payload;
             toast.error(action.payload);
         });
+        
+        //* delete order by admin
+        builder.addCase(deleteOrderByAdmin.pending, (state) => {
+            state.loadingDelete = true;
+        });
+        builder.addCase(deleteOrderByAdmin.fulfilled, (state, action) => {
+            state.loadingDelete = false;
+            state.deleteIsError = false;
+            state.successDelete = true;
+
+            toast.success(action.payload.message);
+        });
+        builder.addCase(deleteOrderByAdmin.rejected, (state, action) => {
+            state.loadingDelete = false;
+            state.deleteIsError = true;
+            state.deleteError = action.payload;
+            toast.error(action.payload);
+        });
     },
 });
 
-export const { payReset, deliverReset } = ordersSlice.actions;
+export const { payReset, deliverReset, deleteReset } = ordersSlice.actions;
 
 export default ordersSlice.reducer;

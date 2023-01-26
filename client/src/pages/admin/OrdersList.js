@@ -5,17 +5,31 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import MessageBox from "../../components/MessageBox";
-import { getAllOrdersByAdmin } from "../../features/ordersSlice";
+import MoonLoading from "../../components/MoonLoading";
+import { deleteOrderByAdmin, deleteReset, getAllOrdersByAdmin } from "../../features/ordersSlice";
 
 const OrdersLIst = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { orders, loading, error } = useSelector(store => store.orders);
+    const { orders, loading, error, loadingDelete, successDelete } = useSelector(store => store.orders);
 
     useEffect(() => {
-        dispatch(getAllOrdersByAdmin())
-    },[])
+        
+        if (successDelete) {
+            dispatch(deleteReset())
+        } else {
+            
+            dispatch(getAllOrdersByAdmin());
+        }
+
+    }, [successDelete]);
+    
+    const deleteOrderHandler = (order) => {
+        if (window.confirm("Are you sure you want to do that?")) {
+            dispatch(deleteOrderByAdmin(order))
+        }
+    }
 
     return (
         <Container>
@@ -66,7 +80,9 @@ const OrdersLIst = () => {
                                 </td>
 
                                 <td>
-                                    <Button type="button" variant="light" onClick={()=>navigate(`/order/${order._id}`)}>Details</Button>
+                                    <Button className="me-2" type="button" variant="light" onClick={() => navigate(`/order/${order._id}`)}>Details</Button>
+                                    
+                                    {loadingDelete ? (<MoonLoading/>) : <Button variant="danger" type="button" onClick={()=>deleteOrderHandler(order)}>Delete</Button>}
                                 </td>
                             </tr>
                         ))}

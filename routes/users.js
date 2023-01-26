@@ -1,9 +1,15 @@
 import express from "express"
 import asyncHandler from "express-async-handler"
-import { isAuth } from "../middlewares/auth.js";
+import { isAdmin, isAuth } from "../middlewares/auth.js";
 import User from "../models/User.js";
 
 const router = express.Router();
+
+router.get("/", isAuth, isAdmin, asyncHandler(async (req, res) => {
+    const users = await User.find();
+
+    res.status(200).send(users)
+}))
 
 router.post("/login", asyncHandler(async (req, res) => {
     const user = await User.findOne({ email: req.body.email });

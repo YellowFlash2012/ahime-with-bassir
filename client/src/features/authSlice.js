@@ -7,6 +7,8 @@ const initialState = {
     user: localStorage.getItem("user")
         ? JSON.parse(localStorage.getItem("user"))
         : null,
+    
+    users:[],
 
     loading: false,
     isError: false,
@@ -47,6 +49,26 @@ export const updateUserProfile = createAsyncThunk(
                         thunkAPI.getState().auth.user.token
                     }`,
                 }});
+
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
+export const getAllUsersByAdmin = createAsyncThunk(
+    "auth/getAllUsersByAdmin",
+    async (_, thunkAPI) => {
+        try {
+            const res = await axios.get("/api/v1/users",  {
+                headers: {
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
 
             return res.data;
         } catch (error) {
@@ -132,6 +154,23 @@ export const authSlice = createSlice({
             toast.success(action.payload.message)
         });
         builder.addCase(updateUserProfile.rejected, (state, action) => {
+            state.loading = false;
+            state.isError = true;
+            state.error = action.payload;
+            toast.error(action.payload);
+        });
+        
+        //*** get all users by admin
+        builder.addCase(getAllUsersByAdmin.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(getAllUsersByAdmin.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isError = false;
+            state.users = action.payload;
+
+        });
+        builder.addCase(getAllUsersByAdmin.rejected, (state, action) => {
             state.loading = false;
             state.isError = true;
             state.error = action.payload;

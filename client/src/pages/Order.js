@@ -56,7 +56,7 @@ const Order = () => {
 
     
     useEffect(() => {
-        if (successPay || successDeliver) {
+        if (!order._id || successPay || successDeliver) {
             dispatch(getOrder(id));
 
             if (successPay) {

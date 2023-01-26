@@ -95,7 +95,7 @@ function App() {
                 </AdminRoutes>
                 } />
                 
-                <Route path="/admin/uders-list" element={<AdminRoutes>
+                <Route path="/admin/users-list" element={<AdminRoutes>
                     <UsersList/>
                 </AdminRoutes>
                 } />
