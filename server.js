@@ -31,6 +31,10 @@ app.get("/api/v1/keys/paypal", (req, res) => {
     res.send(process.env.paypal_client_id || "sb")
 })
 
+app.get("/api/v1/keys/google", (req, res) => {
+    res.send(process.env.google_maps_api || "")
+})
+
 app.use("/api/v1/seed", seedRoutes);
 app.use("/api/v1/products", productRoutes)
 app.use("/api/v1/orders", orderRoutes)

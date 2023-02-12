@@ -3,13 +3,14 @@ import axios from "axios";
 import { getError } from "../utils";
 
 const initialState = {
+    fullBox: false,
     cartItems: localStorage.getItem("cartItems")
         ? JSON.parse(localStorage.getItem("cartItems"))
         : [],
 
     shippingAddress: localStorage.getItem("shippingAddress")
         ? JSON.parse(localStorage.getItem("shippingAddress"))
-        : {},
+        : {location:{}},
 
     paymentMethod: localStorage.getItem("paymentMethod")
         ? localStorage.getItem("paymentMethod")
@@ -71,6 +72,15 @@ export const cartSlice = createSlice({
             localStorage.removeItem("cartItems")
             localStorage.removeItem("shippingAddress")
             localStorage.removeItem("PaymentMethod")
+        },
+        setFullBoxOn: (state) => {
+            state.fullBox = true;
+        },
+        setFullBoxOff: (state) => {
+            state.fullBox = false;
+        },
+        saveShippingAddressMapLocation: (state, action) => {
+            state.shippingAddress.location = action.payload;
         }
     },
 
@@ -81,7 +91,15 @@ export const cartSlice = createSlice({
     },
 });
 
-export const { addToCart, removeFromCart, saveShippingAddress,savePaymentMethod, resetCart } =
-    cartSlice.actions;
+export const {
+    addToCart,
+    removeFromCart,
+    saveShippingAddress,
+    savePaymentMethod,
+    resetCart,
+    setFullBoxOn,
+    setFullBoxOff,
+    saveShippingAddressMapLocation,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { ToastContainer } from "react-toastify";
@@ -8,7 +8,6 @@ import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Product from "./pages/Product";
 
-import "react-toastify/dist/ReactToastify.css";
 import Footer from "./components/Footer";
 import Cart from "./pages/Cart";
 import Shipping from "./pages/Shipping";
@@ -28,93 +27,133 @@ import UsersList from "./pages/admin/UsersList";
 import OrdersList from "./pages/admin/OrdersList";
 import ProductEdit from "./pages/admin/ProductEdit";
 import EditUser from "./pages/admin/EditUser";
+import MoonLoader from "react-spinners/MoonLoader";
+
+import "react-toastify/dist/ReactToastify.css";
+
+const Map = lazy(() => import("./pages/Map"));
 
 function App() {
     return (
-        <BrowserRouter>
-            <NavbarComp />
-            <Routes>
-                <Route path="/" element={<Home />} />
+        <Suspense fallback={<MoonLoader />}>
+            <BrowserRouter>
+                <NavbarComp />
+                <Routes>
+                    <Route path="/" element={<Home />} />
 
-                <Route path="/product/:slug" element={<Product />} />
+                    <Route path="/product/:slug" element={<Product />} />
 
-                <Route path="/cart" element={<Cart />} />
+                    <Route path="/cart" element={<Cart />} />
 
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
 
-                <Route
-                    path="/profile"
-                    element={
-                        <ProtectedRoutes>
-                            <Profile />
-                        </ProtectedRoutes>
-                    }
-                />
+                    <Route
+                        path="/profile"
+                        element={
+                            <ProtectedRoutes>
+                                <Profile />
+                            </ProtectedRoutes>
+                        }
+                    />
 
-                <Route path="/shipping" element={<Shipping />} />
+                    <Route path="/shipping" element={<Shipping />} />
 
-                <Route path="/payment" element={<PaymentMethod />} />
+                    <Route path="/payment" element={<PaymentMethod />} />
 
-                <Route path="/place-order" element={<PlaceOrder />} />
+                    <Route path="/place-order" element={<PlaceOrder />} />
 
-                <Route
-                    path="/order/:id"
-                    element={
-                        <ProtectedRoutes>
-                            <Order />
-                        </ProtectedRoutes>
-                    }
-                />
+                    <Route
+                        path="/order/:id"
+                        element={
+                            <ProtectedRoutes>
+                                <Order />
+                            </ProtectedRoutes>
+                        }
+                    />
 
-                <Route
-                    path="/orders"
-                    element={
-                        <ProtectedRoutes>
-                            <Orders />
-                        </ProtectedRoutes>
-                    }
-                />
+                    <Route
+                        path="/orders"
+                        element={
+                            <ProtectedRoutes>
+                                <Orders />
+                            </ProtectedRoutes>
+                        }
+                    />
 
-                <Route path="/search" element={<Search />} />
+                    <Route
+                        path="/map"
+                        element={
+                            <ProtectedRoutes>
+                                <Map />
+                            </ProtectedRoutes>
+                        }
+                    />
 
-                <Route path="*" element={<NotFound />} />
-                {/* Admin routes */}
+                    <Route path="/search" element={<Search />} />
 
-                <Route path="/admin/dashboard" element={<AdminRoutes>
-                    <Dashboard/>
-                </AdminRoutes>
-                } />
-                
-                <Route path="/admin/products-list" element={<AdminRoutes>
-                    <ProductsList/>
-                </AdminRoutes>
-                } />
-                
-                <Route path="/admin/product/:id" element={<AdminRoutes>
-                    <ProductEdit/>
-                </AdminRoutes>
-                } />
-                
-                <Route path="/admin/users-list" element={<AdminRoutes>
-                    <UsersList/>
-                </AdminRoutes>
-                } />
-                
-                <Route path="/admin/user/:id" element={<AdminRoutes>
-                    <EditUser/>
-                </AdminRoutes>
-                } />
-                
-                <Route path="/admin/orders-list" element={<AdminRoutes>
-                    <OrdersList/>
-                </AdminRoutes>
-                } />
-                
-            </Routes>
-            <ToastContainer />
-            <Footer />
-        </BrowserRouter>
+                    <Route path="*" element={<NotFound />} />
+
+                    {/* Admin routes */}
+
+                    <Route
+                        path="/admin/dashboard"
+                        element={
+                            <AdminRoutes>
+                                <Dashboard />
+                            </AdminRoutes>
+                        }
+                    />
+
+                    <Route
+                        path="/admin/products-list"
+                        element={
+                            <AdminRoutes>
+                                <ProductsList />
+                            </AdminRoutes>
+                        }
+                    />
+
+                    <Route
+                        path="/admin/product/:id"
+                        element={
+                            <AdminRoutes>
+                                <ProductEdit />
+                            </AdminRoutes>
+                        }
+                    />
+
+                    <Route
+                        path="/admin/users-list"
+                        element={
+                            <AdminRoutes>
+                                <UsersList />
+                            </AdminRoutes>
+                        }
+                    />
+
+                    <Route
+                        path="/admin/user/:id"
+                        element={
+                            <AdminRoutes>
+                                <EditUser />
+                            </AdminRoutes>
+                        }
+                    />
+
+                    <Route
+                        path="/admin/orders-list"
+                        element={
+                            <AdminRoutes>
+                                <OrdersList />
+                            </AdminRoutes>
+                        }
+                    />
+                </Routes>
+                <ToastContainer />
+                <Footer />
+            </BrowserRouter>
+        </Suspense>
     );
 }
 

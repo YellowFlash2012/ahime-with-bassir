@@ -56,31 +56,36 @@ const Order = () => {
 
     
     useEffect(() => {
-        if (!order._id || successPay || successDeliver) {
+        if (
+            !order._id ||
+            successPay ||
+            successDeliver ||
+            (order._id && order._id !== id)
+        ) {
             dispatch(getOrder(id));
 
             if (successPay) {
-                dispatch(payReset())
+                dispatch(payReset());
             }
 
             if (successDeliver) {
-                dispatch(deliverReset())
+                dispatch(deliverReset());
             }
         } else {
-            dispatch(loadPaypalScript())
+            dispatch(loadPaypalScript());
 
             paypalDispatch({
                 type: "resetOptions",
                 value: {
                     "client-id": clientId,
-                    currency:"USD"
-                }
-            })
+                    currency: "USD",
+                },
+            });
 
             paypalDispatch({
                 type: "setLoadingStatus",
-                value:"pending"
-            })
+                value: "pending",
+            });
         }
 
     }, [dispatch, navigate, id, order._id, user, clientId, successPay, paypalDispatch, successDeliver])
@@ -117,7 +122,16 @@ const Order = () => {
                                         {order?.shippingAddress.address},{" "}
                                         {order?.shippingAddress.city},{" "}
                                         {order?.shippingAddress.postalCode},{" "}
-                                        {order?.shippingAddress.country}
+                                        {order?.shippingAddress.country},{" "}
+                                        {order.shippingAddress.location && order
+                                            .shippingAddress.location.lat && (
+                                            <a
+                                                target="_new"
+                                                href={`https://maps.google.com?q=${order.shippingAddress.location.lat},${order.shippingAddress.location.lng}`}
+                                            >
+                                                Show On Map
+                                            </a>
+                                        )}
                                     </Card.Text>
 
                                     {order.isDelivered ? (
@@ -137,7 +151,8 @@ const Order = () => {
                                     <Card.Title>Payment</Card.Title>
 
                                     <Card.Text>
-                                        <strong>Method:</strong> {order?.paymentMethod}
+                                        <strong>Method:</strong>{" "}
+                                        {order?.paymentMethod}
                                     </Card.Text>
 
                                     {order.isPaid ? (
@@ -224,7 +239,9 @@ const Order = () => {
 
                                                 <Col>
                                                     $
-                                                    {order?.taxAmount.toFixed(2)}
+                                                    {order?.taxAmount.toFixed(
+                                                        2
+                                                    )}
                                                 </Col>
                                             </Row>
                                         </ListGroupItem>
@@ -240,27 +257,49 @@ const Order = () => {
                                                     )}
                                                 </Col>
                                             </Row>
-                                                </ListGroupItem>
-                                                
-                                                {!order.isPaid && (
-                                                    <ListGroupItem>
-                                                        {isPending ? <Loading /> : 
-                                                            <div>
-                                                                <PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}>
-                                                                </PayPalButtons>
-                                                        </div>
-                                                        }
-                                                        {loadingPay && <Loading/>}
-                                                    </ListGroupItem>
-                                                )}
+                                        </ListGroupItem>
 
-                                                {user.isAdmin && order.isPaid && !order.isDelivered && (
-                                                    <ListGroupItem>
-                                                        <div className="d-grid">
-                                                            {loadingDeliver ? <MoonLoading/> : <Button type="button" onClick={deliverOrderHandler}>Deliver Order</Button>}
-                                                        </div>
-                                                    </ListGroupItem>
+                                        {!order.isPaid && (
+                                            <ListGroupItem>
+                                                {isPending ? (
+                                                    <Loading />
+                                                ) : (
+                                                    <div>
+                                                        <PayPalButtons
+                                                            createOrder={
+                                                                createOrder
+                                                            }
+                                                            onApprove={
+                                                                onApprove
+                                                            }
+                                                            onError={onError}
+                                                        ></PayPalButtons>
+                                                    </div>
                                                 )}
+                                                {loadingPay && <Loading />}
+                                            </ListGroupItem>
+                                        )}
+
+                                        {user.isAdmin &&
+                                            order.isPaid &&
+                                            !order.isDelivered && (
+                                                <ListGroupItem>
+                                                    <div className="d-grid">
+                                                        {loadingDeliver ? (
+                                                            <MoonLoading />
+                                                        ) : (
+                                                            <Button
+                                                                type="button"
+                                                                onClick={
+                                                                    deliverOrderHandler
+                                                                }
+                                                            >
+                                                                Deliver Order
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                </ListGroupItem>
+                                            )}
                                     </ListGroup>
                                 </Card.Body>
                             </Card>

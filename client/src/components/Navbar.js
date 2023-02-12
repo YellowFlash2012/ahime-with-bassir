@@ -14,7 +14,7 @@ const NavbarComp = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     
 
-    const { cartItems } = useSelector(store => store.cart);
+    const { cartItems, fullBox } = useSelector(store => store.cart);
 
     const { user } = useSelector(store => store.auth);
     const { categories } = useSelector((store) => store.products);
@@ -34,7 +34,11 @@ const NavbarComp = () => {
         <div
             className={
                 sidebarOpen
-                    ? "d-flex flex-column site-container active-container"
+                    ? fullBox
+                        ? "d-flex flex-column site-container active-container full-box"
+                        : "d-flex flex-column site-container active-container"
+                    : fullBox
+                    ? "d-flex flex-column site-container full-box"
                     : "d-flex flex-column site-container"
             }
         >
@@ -129,7 +133,6 @@ const NavbarComp = () => {
                                         Login
                                     </Link>
                                 )}
-
                             </Nav>
                         </Navbar.Collapse>
                     </Container>

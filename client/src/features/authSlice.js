@@ -18,6 +18,11 @@ const initialState = {
     loadingUpdate: false,
     updateIsError: false,
     updateError: "",
+    
+    loadingDelete: false,
+    successDelete:false,
+    deleteIsError: false,
+    deleteError: "",
 };
 
 export const loginUser = createAsyncThunk("auth/loginUser", async (userData, thunkAPI) => {
@@ -125,6 +130,27 @@ export const updateUserByAdmin = createAsyncThunk(
     }
 );
 
+export const deleteUserByAdmin = createAsyncThunk(
+    "auth/deleteUserByAdmin",
+    async (user, thunkAPI) => {
+        
+        try {
+            const res = await axios.delete(`/api/v1/users/${user._id}`, {
+                headers: {
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
+
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
 export const authSlice = createSlice({
     name: "auth",
     initialState,
@@ -141,6 +167,10 @@ export const authSlice = createSlice({
             localStorage.removeItem("cartItems");
             localStorage.removeItem("shippingAddress");
             localStorage.removeItem("paymentMethod");
+        },
+        resetDelete: (state) => {
+            state.loadingDelete = false;
+            state.successDelete = false;
         }
     },
 
@@ -260,9 +290,28 @@ export const authSlice = createSlice({
             state.updateError = action.payload;
             toast.error(action.payload);
         });
+        
+        //*** delete 1 user by admin
+        builder.addCase(deleteUserByAdmin.pending, (state) => {
+            state.loadingDelete = true;
+        });
+        builder.addCase(deleteUserByAdmin.fulfilled, (state, action) => {
+            state.loadingDelete = false;
+            state.successDelete = true;
+            state.deleteIsError = false;
+            
+            toast.success(action.payload.message)
+
+        });
+        builder.addCase(deleteUserByAdmin.rejected, (state, action) => {
+            state.loadingDelete = false;
+            state.deleteIsError = true;
+            state.deleteError = action.payload;
+            toast.error(action.payload);
+        });
     },
 });
 
-export const {logout} = authSlice.actions;
+export const { logout, resetDelete } = authSlice.actions;
 
 export default authSlice.reducer;

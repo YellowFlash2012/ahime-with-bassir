@@ -1,89 +1,160 @@
 import { useEffect, useState } from "react";
-import { Button, Container, Form, FormControl, FormGroup, FormLabel } from "react-bootstrap";
+import {
+    Button,
+    Container,
+    Form,
+    FormControl,
+    FormGroup,
+    FormLabel,
+} from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import CheckoutSteps from "../components/CheckoutSteps";
-import { saveShippingAddress } from "../features/cartSlice";
+import { saveShippingAddress, setFullBoxOff } from "../features/cartSlice";
 
 const Shipping = () => {
-    const { user } = useSelector(store => store.auth);
-    const { shippingAddress } = useSelector((store) => store.cart);
+    const { user } = useSelector((store) => store.auth);
+    const { shippingAddress, fullBox } = useSelector((store) => store.cart);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!user) {
-            navigate("/login?redirect=/shipping")
+            navigate("/login?redirect=/shipping");
 
             return;
         }
-    },[navigate, user])
+    }, [navigate, user]);
 
     const [fullName, setFullName] = useState(user?.name || "");
     const [address, setAddress] = useState(shippingAddress.address || "");
     const [city, setCity] = useState(shippingAddress.city || "");
-    const [postalCode, setPostalCode] = useState(shippingAddress.postalCode || "");
+    const [postalCode, setPostalCode] = useState(
+        shippingAddress.postalCode || ""
+    );
     const [country, setCountry] = useState(shippingAddress.country || "");
-    
 
     const shippingHandler = (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
-        dispatch(saveShippingAddress({fullName, address, city, postalCode, country}));
+        dispatch(
+            saveShippingAddress({
+                fullName,
+                address,
+                city,
+                postalCode,
+                country,
+                location: shippingAddress.location,
+            })
+        );
 
-        localStorage.setItem("shippingAddress", JSON.stringify({
-            fullName, address, city, postalCode, country
-        }))
+        localStorage.setItem(
+            "shippingAddress",
+            JSON.stringify({
+                fullName,
+                address,
+                city,
+                postalCode,
+                country,
+                location: shippingAddress.location,
+            })
+        );
 
-        navigate("/payment")
-    }
-    
-    return <Container>
-        <Helmet>
-            <title>Shipping Address</title>
-        </Helmet>
+        navigate("/payment");
+    };
 
-        <CheckoutSteps step1 step2></CheckoutSteps>
+    useEffect(() => {
+        dispatch(setFullBoxOff());
+    }, [dispatch, fullBox]);
 
-        <h1 className="my-3">Shipping Address</h1>
+    return (
+        <Container>
+            <Helmet>
+                <title>Shipping Address</title>
+            </Helmet>
 
-        <Form onSubmit={shippingHandler}>
-            <FormGroup className="mb-3" controlId="fullName">
-                <FormLabel>Full name</FormLabel>
+            <CheckoutSteps step1 step2></CheckoutSteps>
 
-                <FormControl value={fullName} onChange={(e)=>setFullName(e.target.value)} placeholder="Enter your full name..." required></FormControl>
-            </FormGroup>
-            
-            <FormGroup className="mb-3" controlId="address">
-                <FormLabel>Address</FormLabel>
+            <h1 className="my-3">Shipping Address</h1>
 
-                <FormControl value={address} onChange={(e)=>setAddress(e.target.value)} placeholder="Enter your address..." required></FormControl>
-            </FormGroup>
-            
-            <FormGroup className="mb-3" controlId="city">
-                <FormLabel>City</FormLabel>
+            <Form onSubmit={shippingHandler}>
+                <FormGroup className="mb-3" controlId="fullName">
+                    <FormLabel>Full name</FormLabel>
 
-                <FormControl value={city} onChange={(e)=>setCity(e.target.value)} placeholder='Enter your city...' required></FormControl>
-            </FormGroup>
-            
-            <FormGroup className="mb-3" controlId="postalCode">
-                <FormLabel>Postal Code</FormLabel>
+                    <FormControl
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Enter your full name..."
+                        required
+                    ></FormControl>
+                </FormGroup>
 
-                <FormControl value={postalCode} onChange={(e)=>setPostalCode(e.target.value)} placeholder='Enter your postal code...' required></FormControl>
-            </FormGroup>
-            
-            <FormGroup className="mb-3" controlId="country">
-                <FormLabel>Country</FormLabel>
+                <FormGroup className="mb-3" controlId="address">
+                    <FormLabel>Address</FormLabel>
 
-                <FormControl value={country} onChange={(e)=>setCountry(e.target.value)} placeholder='Enter your country...' required></FormControl>
-            </FormGroup>
+                    <FormControl
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="Enter your address..."
+                        required
+                    ></FormControl>
+                </FormGroup>
 
-            <div className="mb-3">
-                <Button variant="primary" type="submit">Continue</Button>
-            </div>
-        </Form>
-    </Container>;
+                <FormGroup className="mb-3" controlId="city">
+                    <FormLabel>City</FormLabel>
+
+                    <FormControl
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="Enter your city..."
+                        required
+                    ></FormControl>
+                </FormGroup>
+
+                <FormGroup className="mb-3" controlId="postalCode">
+                    <FormLabel>Postal Code</FormLabel>
+
+                    <FormControl
+                        value={postalCode}
+                        onChange={(e) => setPostalCode(e.target.value)}
+                        placeholder="Enter your postal code..."
+                        required
+                    ></FormControl>
+                </FormGroup>
+
+                <FormGroup className="mb-3" controlId="country">
+                    <FormLabel>Country</FormLabel>
+
+                    <FormControl
+                        value={country}
+                        onChange={(e) => setCountry(e.target.value)}
+                        placeholder="Enter your country..."
+                        required
+                    ></FormControl>
+                </FormGroup>
+
+                <div className="mb-3">
+                    <Button id="chooseOnMap" type="button" variant="light" onClick={() => navigate("/map")}>Choose Location On Map</Button>
+                    
+                    {shippingAddress.location && shippingAddress.location.lat ? (
+                        <div>
+                            LAT:{shippingAddress.location.lat}{" "}
+                            LNG:{shippingAddress.location.lng}
+                        </div>
+                    ) : (
+                            <div>No location</div>
+                    )}
+                </div>
+
+                <div className="mb-3">
+                    <Button variant="primary" type="submit">
+                        Continue
+                    </Button>
+                </div>
+            </Form>
+        </Container>
+    );
 };
 export default Shipping;

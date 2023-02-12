@@ -101,7 +101,7 @@ router.put(
     isAdmin,
     asyncHandler(async (req, res) => {
         const user = await User.findById(req.params.id);
-console.log(req.params.id);
+
         if (user) {
             user.name = req.body.name || user.name;
             user.email = req.body.email || user.email;
@@ -109,6 +109,30 @@ console.log(req.params.id);
 
             const updatedUser = await user.save();
             res.status(201).send({ message: "User updated!", updatedUser });
+        } else {
+            res.status(404).send({message:"user NOT found!"});
+            
+        }
+
+    })
+);
+
+// delete one single user by admin
+router.delete(
+    "/:id",
+    isAuth,
+    isAdmin,
+    asyncHandler(async (req, res) => {
+        const user = await User.findById(req.params.id);
+
+        if (user) {
+            if (user.isAdmin) {
+                return res.status(400).send({message:"Can NOT delete an admin"})
+            }
+
+            await user.remove();
+
+            res.status(200).send({message:"User deleted!"})
         } else {
             res.status(404).send({message:"user NOT found!"});
             

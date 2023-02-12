@@ -5,19 +5,30 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import MessageBox from "../../components/MessageBox";
-import { getAllUsersByAdmin } from "../../features/authSlice";
+import MoonLoading from "../../components/MoonLoading";
+import { deleteUserByAdmin, getAllUsersByAdmin, resetDelete } from "../../features/authSlice";
 
 const UsersList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { users, loading, error } = useSelector((store) => store.auth);
+    const { users, loading, error, successDelete, loadingDelete } = useSelector((store) => store.auth);
 
     useEffect(() => {
-        dispatch(getAllUsersByAdmin())
-    }, [])
+        if (successDelete) {
+            dispatch(resetDelete())
+        } else {
+            
+            dispatch(getAllUsersByAdmin())
+        }
+    }, [successDelete, dispatch])
     
-    const deleteUserHandler=(user)=>{}
+    const deleteUserHandler = (user) => {
+        if (window.confirm("Do you really want to do that?")) {
+            
+            dispatch(deleteUserByAdmin(user))
+        }
+    }
 
     return (
         <Container>
@@ -54,7 +65,7 @@ const UsersList = () => {
                                 <td>
                                     <Button className="me-2" variant="light" type="button" onClick={() => navigate(`/admin/user/${user._id}`)}>Edit</Button>
                                     
-                                    <Button variant="danger" type="button" onClick={deleteUserHandler(user)}>Delete</Button>
+                                    {loadingDelete ? <MoonLoading/> : <Button variant="danger" type="button" onClick={()=>deleteUserHandler(user)}>Delete</Button> }
                                 </td>
                             </tr>
                         ))}
