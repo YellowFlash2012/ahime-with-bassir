@@ -1,6 +1,7 @@
 import express from "express"
 import asyncHandler from "express-async-handler"
 import { isAdmin, isAuth } from "../middlewares/auth.js";
+import { mailgun, payOrderEmailTemplate } from "../middlewares/mail.js";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import User from "../models/User.js";
@@ -77,7 +78,7 @@ router.post("/", isAuth, asyncHandler(async (req, res) => {
 
 // * pay order
 router.put("/:id/pay", isAuth, asyncHandler(async (req, res) => {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate("user", "email name");
     
     if (order) {
         order.isPaid = true;
@@ -91,6 +92,20 @@ router.put("/:id/pay", isAuth, asyncHandler(async (req, res) => {
         }
         
         const updatedOrder = await order.save();
+
+        // send a receipt email
+        mailgun().message().send({
+            from: "Amazon <amazona@mg.yourdomain.com",
+            to: `${order.user.name} <${order.user.email}>`,
+            subject: `new order ${order._id}`,
+            html:payOrderEmailTemplate(order)
+        }, (error, body) => {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log(body);
+            }
+        });
         
         res.send({ message: "Successful payment!", order: updatedOrder });
     } else {
