@@ -6,10 +6,13 @@ import {
     FormControl,
     FormGroup,
     FormLabel,
+    ListGroup,
+    ListGroupItem,
 } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
 import MessageBox from "../../components/MessageBox";
 import MoonLoading from "../../components/MoonLoading";
@@ -27,6 +30,7 @@ const ProductEdit = () => {
     const [slug, setSlug] = useState("");
     const [price, setPrice] = useState("");
     const [image, setImage] = useState("");
+    const [images, setImages] = useState([]);
     const [category, setCategory] = useState("");
     const [brand, setBrand] = useState("");
     const [description, setDescription] = useState("");
@@ -36,17 +40,27 @@ const ProductEdit = () => {
 
     const updateProductHandler = (e) => {
         e.preventDefault();
-        dispatch(updateProductByAdmin({ _id: id, name, slug, price, image, category, brand, description, countInStock }));
+        dispatch(updateProductByAdmin({ _id: id, name, slug, price, image, images, category, brand, description, countInStock }));
     }
 
-    const uploadFileHandler = (e) => {
+    const uploadFileHandler = (e, forImages) => {
         const file = e.target.file[0];
         const bodyFormData = new FormData();
         bodyFormData.append('file', file)
 
         dispatch(uploadImageByAdmin(bodyFormData))
 
-        setImage(imageURL)
+        if (forImages) {
+            setImages([...images, imageURL])
+        } else {
+            setImage(imageURL)
+            
+        }
+
+        toast.success(
+            "Images uploaded successfully! Click Update to apply changes"
+        );
+
     }
 
     useEffect(() => {
@@ -55,11 +69,18 @@ const ProductEdit = () => {
         setSlug(productToEdit?.slug);
         setPrice(productToEdit?.price);
         setImage(productToEdit?.image);
+        setImages(productToEdit?.images);
         setCategory(productToEdit?.category);
         setBrand(productToEdit?.brand);
         setDescription(productToEdit?.description);
         setCountInStock(productToEdit?.countInStock);
     }, [id, dispatch, productToEdit?.name]);
+
+    const deleteImageHandler = async (filename) => {
+        setImages(images.filter(x => x !== filename))
+
+        toast.success("Image removed! Click Update to apply changes")
+    }
 
     return (
         <Container className="small-container">
@@ -112,9 +133,33 @@ const ProductEdit = () => {
                             </FormGroup>
                             
                             <FormGroup className="mb-3" controlId="imageFile">
-                                <FormLabel>Upload File</FormLabel>
+                                <FormLabel>Upload Image</FormLabel>
 
                                 {loadingUpload ? (<MoonLoading/>) : <FormControl type="file" onChange={uploadFileHandler}/>}
+                            </FormGroup>
+
+                            <FormGroup className="mb-3" controlId="additionalImage">
+                                <FormLabel>Additional Images</FormLabel>
+
+                                {images?.length === 0 && <MessageBox>No image</MessageBox>}
+                                
+                                <ListGroup variant="flush">
+                                    {images?.map(x => (
+                                        <ListGroupItem key={x}>
+                                            {x}
+
+                                            <Button variant="danger" onClick={() => deleteImageHandler(x)}>
+                                               <i className="fas fa-times-circle"></i> 
+                                            </Button>
+                                        </ListGroupItem>
+                                    ))}
+                                </ListGroup>
+                            </FormGroup>
+
+                            <FormGroup className="mb-3" controlId="additionalImageFiles">
+                                <FormLabel>Upload additional Images</FormLabel>
+
+                                {loadingUpload ? <MoonLoading/> : <FormControl type="file" onChange={(e)=>uploadFileHandler(e, true)}></FormControl>}
                             </FormGroup>
 
                     <FormGroup className="mb-3" controlId="category">

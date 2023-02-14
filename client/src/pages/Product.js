@@ -5,6 +5,7 @@ import {
     Badge,
     Button,
     Card,
+    CardImg,
     Col,
     Container,
     FloatingLabel,
@@ -34,6 +35,7 @@ const Product = () => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const [name, setName] = useState("");
+    const [selectedImg, setSelectedImg] = useState("");
 
     const { slug } = useParams();
 
@@ -102,7 +104,7 @@ const Product = () => {
                     <Row>
                         <Col md={6}>
                             <img
-                                src={product.image}
+                                src={selectedImg || product.image}
                                 alt={product.name}
                                 className="img-large"
                             />
@@ -126,7 +128,26 @@ const Product = () => {
 
                                 <ListGroupItem>
                                     Price: ${product.price}
-                                </ListGroupItem>
+                                        </ListGroupItem>
+                                        
+                                        <ListGroupItem>
+                                            <Row xs={1} md={2} className="g-2">
+                                                {
+                                                    [product.image, ...product.images].map(x => (
+                                                        <Col key={x}>
+                                                            <Card>
+                                                                <Button className="thumbnail"
+                                                                    type="button"
+                                                                    variant="light"
+                                                                    onClick={() => setSelectedImg(x)}>
+                                                                    <CardImg variant="top" src={x}/>
+                                                                </Button>
+                                                            </Card>
+                                                        </Col>
+                                                    ))
+                                                }
+                                            </Row>
+                                        </ListGroupItem>
 
                                 <ListGroupItem>
                                     Description: <p>{product.description}</p>
