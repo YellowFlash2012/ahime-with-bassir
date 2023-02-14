@@ -23,6 +23,11 @@ const initialState = {
     updateIsError:false,
     updateError: "",
     
+    loadingNewReview: false,
+    reviewIsError:false,
+    reviewError: "",
+    newReview:{},
+    
     loadingUpload: false,
     uploadIsError:false,
     uploadError: "",
@@ -200,6 +205,27 @@ export const deleteProductByAdmin = createAsyncThunk(
             const res = await axios.delete(`/api/v1/products/${pdt._id}`, {
                 headers: {
                     
+                    authorization: `Bearer ${
+                        thunkAPI.getState().auth.user.token
+                    }`,
+                },
+            });
+            return res.data;
+        } catch (error) {
+            // console.log(error.message);
+            return thunkAPI.rejectWithValue(getError(error));
+        }
+    }
+);
+
+export const addNewReview = createAsyncThunk(
+    "products/addNewReview",
+    async (reviewData, thunkAPI) => {
+        console.log(reviewData);
+        console.log(reviewData.id);
+        try {
+            const res = await axios.post(`/api/v1/products/${reviewData.id}/reviews`, reviewData, {
+                headers: {
                     authorization: `Bearer ${
                         thunkAPI.getState().auth.user.token
                     }`,
@@ -405,6 +431,28 @@ export const productsSlice = createSlice({
             state.successDelete = false;
             state.deleteIsError = true;
             state.deleteError = action.payload;
+            toast.error(action.payload)
+        });
+        
+        // add new review
+        builder.addCase(addNewReview.pending, (state) => {
+            state.loadingNewReview = true;
+        });
+        builder.addCase(addNewReview.fulfilled, (state, action) => {
+            state.loadingNewReview = false;
+            state.reviewIsError = false;
+
+            state.newReview = action.payload.newReview;
+            console.log(action.payload.newReview);
+
+            toast.success(action.payload.message)
+        
+        });
+        builder.addCase(addNewReview.rejected, (state, action) => {
+            state.loadingNewReview = false;
+        
+            state.reviewIsError = true;
+            state.reviewError = action.payload;
             toast.error(action.payload)
         });
     },

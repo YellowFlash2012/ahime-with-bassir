@@ -7,22 +7,29 @@ const router = express.Router();
 
 // ***admin routes***
 // get all products
-router.get("/admin", isAuth, isAdmin, asyncHandler(async (req, res) => {
-    const { query } = req;
-    const page = query.page || 1;
-    const pageSize = query.pageSize || PAGE_SIZE;
+router.get(
+    "/admin",
+    isAuth,
+    isAdmin,
+    asyncHandler(async (req, res) => {
+        const { query } = req;
+        const page = query.page || 1;
+        const pageSize = query.pageSize || PAGE_SIZE;
 
-    const products = await Product.find().skip(pageSize * (page - 1)).limit(pageSize);
+        const products = await Product.find()
+            .skip(pageSize * (page - 1))
+            .limit(pageSize);
 
-    const productsCount = await Product.countDocuments();
+        const productsCount = await Product.countDocuments();
 
-    res.status(200).send({
-        products,
-        productsCount,
-        page,
-        pages:Math.ceil(productsCount/pageSize)
+        res.status(200).send({
+            products,
+            productsCount,
+            page,
+            pages: Math.ceil(productsCount / pageSize),
+        });
     })
-}))
+);
 
 // create new product
 router.post(
@@ -40,15 +47,14 @@ router.post(
             countInStock: 0,
             rating: 0,
             numReviews: 0,
-            description: "sample description"
+            description: "sample description",
         });
 
         const product = await newProduct.save();
 
         res.status(201).send({
-            message:"Product created!",
+            message: "Product created!",
             product,
-            
         });
     })
 );
@@ -70,7 +76,6 @@ const PAGE_SIZE = 3;
 router.get(
     "/search",
     asyncHandler(async (req, res) => {
-
         const { query } = req;
 
         const pageSize = query.pageSize || PAGE_SIZE;
@@ -85,11 +90,11 @@ router.get(
         const queryFilter =
             searchQuery && searchQuery !== "all"
                 ? {
-                    name: {
-                        $regex: searchQuery,
-                        $options: 1,
-                    },
-                }
+                      name: {
+                          $regex: searchQuery,
+                          $options: 1,
+                      },
+                  }
                 : {};
 
         const categoryFilter =
@@ -98,44 +103,57 @@ router.get(
         const ratingFilter =
             rating && rating !== "all"
                 ? {
-                    rating: {
-                        $gte: Number(rating),
-                    },
-                }
+                      rating: {
+                          $gte: Number(rating),
+                      },
+                  }
                 : {};
 
         const priceFilter =
             price && price !== "all"
                 ? {
-                    price: {
-                        $gte: Number(price.split("-")[0]),
-                        $lte: Number(price.split("-")[1]),
-                    },
-                }
+                      price: {
+                          $gte: Number(price.split("-")[0]),
+                          $lte: Number(price.split("-")[1]),
+                      },
+                  }
                 : {};
 
-        const sortOrder = order === "featured" ? { featured: -1 } : order === "lowest" ? { price: 1 } : order === "highest" ? { price: -1 } : order === "toprated" ? { rating: -1 } : order === "newest" ? { createdAt: -1 } : { _id: -1 };
+        const sortOrder =
+            order === "featured"
+                ? { featured: -1 }
+                : order === "lowest"
+                ? { price: 1 }
+                : order === "highest"
+                ? { price: -1 }
+                : order === "toprated"
+                ? { rating: -1 }
+                : order === "newest"
+                ? { createdAt: -1 }
+                : { _id: -1 };
 
         const products = await Product.find({
             ...queryFilter,
             ...categoryFilter,
             ...priceFilter,
-            ...ratingFilter
-        }).sort(sortOrder).skip(pageSize * (page - 1)).limit(pageSize);
+            ...ratingFilter,
+        })
+            .sort(sortOrder)
+            .skip(pageSize * (page - 1))
+            .limit(pageSize);
 
         const countProducts = await Product.countDocuments({
             ...queryFilter,
             ...categoryFilter,
             ...priceFilter,
-            ...ratingFilter
-        })
-        
+            ...ratingFilter,
+        });
 
         res.status(200).send({
             products,
             countProducts,
             page,
-            pages:Math.ceil(countProducts/pageSize)
+            pages: Math.ceil(countProducts / pageSize),
         });
     })
 );
@@ -154,9 +172,7 @@ router.get(
 router.get(
     "/:id",
     asyncHandler(async (req, res) => {
-        
         const product = await Product.findById(req.params.id);
-        
 
         if (product) {
             res.status(200).send(product);
@@ -180,37 +196,89 @@ router.get(
 );
 
 // update product by admin
-router.put("/:id", isAuth, isAdmin, asyncHandler(async (req, res) => {
-    const product = await Product.findById(req.params.id);
+router.put(
+    "/:id",
+    isAuth,
+    isAdmin,
+    asyncHandler(async (req, res) => {
+        const product = await Product.findById(req.params.id);
 
-    if (product) {
-        product.name = req.body.name;
-        product.price = req.body.price;
-        product.image = req.body.image;
-        product.category = req.body.category;
-        product.brand = req.body.brand;
-        product.countInStock = req.body.countInStock;
-        product.description = req.body.description;
+        if (product) {
+            product.name = req.body.name;
+            product.price = req.body.price;
+            product.image = req.body.image;
+            product.category = req.body.category;
+            product.brand = req.body.brand;
+            product.countInStock = req.body.countInStock;
+            product.description = req.body.description;
 
-        await product.save()
+            await product.save();
 
-        res.status(201).send({message:"Product updated successfully!"})
-    } else {
-        res.status(404).send({message:"Product Not Found!"})
-    }
-}))
+            res.status(201).send({ message: "Product updated successfully!" });
+        } else {
+            res.status(404).send({ message: "Product Not Found!" });
+        }
+    })
+);
 
 // delete product by admin
-router.delete("/:id", isAuth, isAdmin, asyncHandler(async(req, res) => {
-    const product = await Product.findById(req.params.id);
+router.delete(
+    "/:id",
+    isAuth,
+    isAdmin,
+    asyncHandler(async (req, res) => {
+        const product = await Product.findById(req.params.id);
 
-    if (product) {
-        await product.remove()
+        if (product) {
+            await product.remove();
 
-        res.send({message:"Product deleted!"})
-    } else {
-        res.status(404).send({message:"Product NOT found!"})
-    }
-}))
+            res.send({ message: "Product deleted!" });
+        } else {
+            res.status(404).send({ message: "Product NOT found!" });
+        }
+    })
+);
+
+// reviews
+router.post(
+    "/:id/reviews",
+    isAuth,
+
+    asyncHandler(async (req, res) => {
+        const product = await Product.findById(req.params.id);
+
+        if (product) {
+            if (product.reviews.find((x) => x.name === req.user.name)) {
+                return res
+                    .status(400)
+                    .send({ message: "You already submitted a review" });
+            }
+            const review = {
+                name: req.user.name,
+                rating: Number(req.body.rating),
+                comment: req.body.comment,
+            };
+
+            product.reviews.push(review);
+            product.numReviews = product.reviews.length;
+            product.rating =
+                product.reviews.reduce((a, c) => c.rating + a, 0) /
+                product.reviews.length;
+
+            const updatedPdt = await product.save();
+
+            res.status(201).send({
+                message: "Your review was added!",
+                newReview: {
+                    review: updatedPdt.reviews[updatedPdt.reviews.length - 1],
+                    numReviews: product.numReviews,
+                    rating: product.rating,
+                },
+            });
+        } else {
+            res.status(404).send({ message: "Product NOT found!" });
+        }
+    })
+);
 
 export default router;

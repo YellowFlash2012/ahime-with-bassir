@@ -30,7 +30,7 @@ const Login = () => {
         
         // console.log(isError);
         // console.log(user);
-        if (!isError && !user.isAdmin) {
+        if (!isError && !user?.isAdmin) {
             navigate(redirect || "/");
         } 
     }
