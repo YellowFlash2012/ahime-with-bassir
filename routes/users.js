@@ -22,6 +22,7 @@ router.post("/login", asyncHandler(async (req, res) => {
                 name: user.name,
                 email: user.email,
                 isAdmin: user.isAdmin,
+                isSeller: user.isSeller,
                 token: token
             });
             return;
@@ -55,6 +56,7 @@ router.post("/", asyncHandler(async (req, res) => {
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin,
+        isSeller:user.isSeller,
         token:token
     })
 }))
@@ -67,10 +69,18 @@ router.put("/profile", isAuth, asyncHandler(async (req, res) => {
         user.email = req.body.email || user.email;
         user.password = req.body.password || user.password;
 
+        if (user.isSeller) {
+            user.seller.name = req.body.sellerName || user.seller.name;
+            
+            user.seller.description = req.body.sellerDescription || user.seller.description;
+            
+            user.seller.logo = req.body.sellerLogo || user.seller.logo;
+        }
+
         const updatedUser = await user.save();
         const token = updatedUser.createJWT();
 
-        res.status(201).json({ message: "User updated successfully!", data: { _id: updatedUser._id, name: updatedUser.name, email: updatedUser.email, isAdmin: updatedUser.isAdmin, token: token } });
+        res.status(201).json({ message: "User updated successfully!", data: { _id: updatedUser._id, name: updatedUser.name, email: updatedUser.email, isAdmin: updatedUser.isAdmin, isSeller:updatedUser.isSeller, token: token } });
     } else {
         res.status(404).send("User Not Found!")
     }

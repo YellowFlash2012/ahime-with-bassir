@@ -31,3 +31,21 @@ export const isAdmin = (req, res, next) => {
         res.status(401).send("This is admin territory!")
     }
 }
+
+export const isSeller = (req, res, next) => { 
+    // console.log(req.user);
+    if (req.user && req.user.isSeller) {
+        next()
+    } else {
+        res.status(401).send("This is seller territory!")
+    }
+}
+
+export const isSellerOrAdmin = (req, res, next) => { 
+    // console.log(req.user);
+    if (req.user && (req.user.isSeller || req.user.isAdmin)) {
+        next();
+    } else {
+        res.status(401).send("This is seller/admin territory!");
+    }
+}

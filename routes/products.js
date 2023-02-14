@@ -1,6 +1,6 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
-import { isAdmin, isAuth } from "../middlewares/auth.js";
+import { isAdmin, isAuth, isSellerOrAdmin } from "../middlewares/auth.js";
 import Product from "../models/Product.js";
 
 const router = express.Router();
@@ -35,10 +35,11 @@ router.get(
 router.post(
     "/",
     isAuth,
-    isAdmin,
+    isSellerOrAdmin,
     asyncHandler(async (req, res) => {
         const newProduct = new Product({
             name: "sample name " + Date.now(),
+            seller:req.user.id,
             slug: "sample-name-" + Date.now(),
             image: "/images/p1.jpg",
             price: 0,
@@ -199,7 +200,7 @@ router.get(
 router.put(
     "/:id",
     isAuth,
-    isAdmin,
+    isSellerOrAdmin,
     asyncHandler(async (req, res) => {
         const product = await Product.findById(req.params.id);
 
@@ -226,7 +227,7 @@ router.put(
 router.delete(
     "/:id",
     isAuth,
-    isAdmin,
+    isSellerOrAdmin,
     asyncHandler(async (req, res) => {
         const product = await Product.findById(req.params.id);
 

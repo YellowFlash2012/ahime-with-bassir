@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
-const AdminRoutes = ({ children }) => {
+const SellerRoutes = ({ children }) => {
     const { user } = useSelector((store) => store.auth);
 
-    return <>{user && user.isAdmin ? children : <Navigate to="/login" />}</>;
+    return <>{user && user.isSeller ? children : <Navigate to="/login" />}</>;
 };
-export default AdminRoutes;
+export default SellerRoutes;

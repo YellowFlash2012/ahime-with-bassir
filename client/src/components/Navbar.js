@@ -91,6 +91,23 @@ const NavbarComp = () => {
                                                     </NavDropdown.Item>
                                                 </LinkContainer>
                                             </>
+                                        ) : user && user.isSeller ? (
+                                            <>
+                                                
+
+                                                <LinkContainer to="/seller/products-list">
+                                                    <NavDropdown.Item>
+                                                        Products
+                                                    </NavDropdown.Item>
+                                                </LinkContainer>
+
+                                                <LinkContainer to="/seller/orders-list">
+                                                    <NavDropdown.Item>
+                                                        Orders
+                                                    </NavDropdown.Item>
+                                                </LinkContainer>
+
+                                            </>
                                         ) : (
                                             <>
                                                 <LinkContainer to="/admin/dashboard">
